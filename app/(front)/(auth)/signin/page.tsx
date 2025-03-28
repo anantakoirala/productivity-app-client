@@ -39,11 +39,9 @@ const Page = (props: Props) => {
   const onSubmit = async (data: SignInSchema) => {
     try {
       const response = await restApi.post("/api/auth/signin", data);
-
+      console.log("data", response);
       toast.success(response?.data?.message);
-      //router.push("/signin");
-
-      console.log("data", data);
+      router.push("/on-boarding");
     } catch (error) {
       console.log("error", error);
     }

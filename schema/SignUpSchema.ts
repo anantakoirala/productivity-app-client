@@ -8,6 +8,7 @@ export const signUpSchema = z
       .min(5, "Password should contain atleast 5 characters")
       .nonempty("Password is required"), // Ensures password is not empty,
     confirmPassword: z.string().nonempty("Confirm Password is required"),
+    name: z.string().min(2),
     username: z
       .string()
       .min(2, "Username should contain at least 2 characters"),
