@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dispatch, SetStateAction } from "react";
 
 type initialState = {
-  currentStep: 1 | 2 | 3;
+  currentStep: 1 | 2 | 3 | 4;
   name?: string | null;
   surname?: string | null;
   profileImage?: string | null;

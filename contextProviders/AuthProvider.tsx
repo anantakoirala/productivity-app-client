@@ -10,6 +10,7 @@ export type AuthContextValue = {
   email: string;
   name: string;
   image: string | null;
+  completeOnBoarding: boolean;
 };
 
 export const AuthContext = createContext<AuthContextValue | undefined>(
@@ -35,6 +36,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             email: response.data.user?.email || "",
             name: response.data.user?.name || "",
             image: response.data.user?.image || null,
+            completeOnBoarding: response.data.user?.completeOnBoarding,
           };
 
           dispatch(
@@ -42,6 +44,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               email: response.data.user.email,
               name: response.data.user.name,
               image: response.data.user.image || null,
+              completeOnBoarding: response.data.user.completeOnBoarding,
             })
           );
           setAuthenticatedUser(userData);

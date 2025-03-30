@@ -5,6 +5,7 @@ import FirstStep from "./Steps/FirstStep";
 import SecondStep from "./Steps/SecondStep";
 import ThirdStep from "./Steps/ThirdStep";
 import FormsStepInfo from "./FormsStepInfo";
+import FourthStep from "./Steps/FourthStep";
 
 type Props = {};
 
@@ -18,12 +19,15 @@ const AdditionalInfoSection = (props: Props) => {
             My <span className="text-primary font-semibold">App</span>
           </h1>
         </div>
-        <h2 className="font-bold text-4xl md:text-5xl flex flex-col items-center my-10">
-          Let&apos;s prepare you
-        </h2>
+        {currentStep === 1 && (
+          <h2 className="font-bold text-4xl md:text-5xl flex flex-col items-center my-10">
+            Let&apos;s prepare you
+          </h2>
+        )}
         {currentStep === 1 && <FirstStep />}
         {currentStep === 2 && <SecondStep />}
         {currentStep === 3 && <ThirdStep />}
+        {currentStep === 4 && <FourthStep />}
       </div>
       <FormsStepInfo />
     </section>
