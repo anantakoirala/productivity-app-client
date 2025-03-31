@@ -129,6 +129,7 @@ const ThirdStep = (props: Props) => {
           name: response.user.name,
           image: response.user.image || null,
           completeOnBoarding: response.user.completeOnBoarding,
+          username: response.user.username,
         })
       );
       toast.success("Onboarding completed");

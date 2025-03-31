@@ -46,9 +46,8 @@ const Page = (props: Props) => {
       const response = await restApi.post("/api/auth/signup", data);
 
       toast.success(response?.data?.message);
-      //router.push("/signin");
+      router.push("/signin");
       setIsLoading(false);
-      console.log("data", data);
     } catch (error: any) {
       setIsLoading(false);
       toast.error(error?.response?.data?.message);
@@ -97,7 +96,11 @@ const Page = (props: Props) => {
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <Input placeholder="password" {...register("password")} />
+                <Input
+                  placeholder="password"
+                  {...register("password")}
+                  type="password"
+                />
                 {errors && errors.password && (
                   <span className="text-red-600 text-sm">
                     {errors?.password.message}
@@ -106,6 +109,7 @@ const Page = (props: Props) => {
               </div>
               <div className="flex flex-col gap-1">
                 <Input
+                  type="password"
                   placeholder="confirm password"
                   {...register("confirmPassword")}
                 />

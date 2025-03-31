@@ -44,7 +44,10 @@ const ImageSchema = z.object({
 const AddImage = (props: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+
   const inputRef = useRef<null | HTMLInputElement>(null);
+
+  const { image } = useSelector((state: RootState) => state.user);
 
   const [saveProfileImage, { isError, isLoading, isSuccess }] =
     useSaveProfileImageMutation();
@@ -53,8 +56,6 @@ const AddImage = (props: Props) => {
     trigger,
     { isLoading: deleteUserImageLoading, isError: deleteUserImageError },
   ] = useLazyDeleteUserProfileImageQuery();
-
-  const { image } = useSelector((state: RootState) => state.user);
 
   const form = useForm<z.infer<typeof ImageSchema>>({
     resolver: zodResolver(ImageSchema),
@@ -121,8 +122,8 @@ const AddImage = (props: Props) => {
   }, [image]);
 
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-2">
-      <div className="">
+    <div className="w-full flex flex-col justify-center items-center gap-2 ">
+      <div className="flex flex-col items-center justify-center">
         <p className="text-sm text-muted-foreground">Add a photo</p>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>

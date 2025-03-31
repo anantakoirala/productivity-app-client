@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { handleApiError } from "@/lib/handleApiError";
 import { signInSchema, SignInSchema } from "@/schema/SignInSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -41,8 +42,9 @@ const Page = (props: Props) => {
       const response = await restApi.post("/api/auth/signin", data);
       console.log("data", response);
       toast.success(response?.data?.message);
-      router.push("/on-boarding");
+      router.push("/dashboard");
     } catch (error) {
+      handleApiError(error);
       console.log("error", error);
     }
   };
@@ -73,7 +75,11 @@ const Page = (props: Props) => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <Input placeholder="password" {...register("password")} />
+                <Input
+                  placeholder="password"
+                  {...register("password")}
+                  type="password"
+                />
                 {errors && errors.password && (
                   <span className="text-red-600 text-sm">
                     {errors?.password.message}

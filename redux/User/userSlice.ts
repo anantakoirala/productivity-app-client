@@ -7,6 +7,7 @@ type initialState = {
   email: string;
   image: string | null;
   completeOnBoarding: boolean;
+  username: string;
 };
 
 const initialState: initialState = {
@@ -14,6 +15,7 @@ const initialState: initialState = {
   email: "",
   image: null,
   completeOnBoarding: false,
+  username: "",
 };
 
 export const userSlice = createSlice({
@@ -27,12 +29,14 @@ export const userSlice = createSlice({
         name: string;
         image: string | null;
         completeOnBoarding: boolean;
+        username: string;
       }>
     ) => {
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.image = action.payload.image;
       state.completeOnBoarding = action.payload.completeOnBoarding;
+      state.username = action.payload.username;
     },
     setImage: (state, action) => {
       state.image = action.payload;

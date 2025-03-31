@@ -11,6 +11,7 @@ export type AuthContextValue = {
   name: string;
   image: string | null;
   completeOnBoarding: boolean;
+  username: string;
 };
 
 export const AuthContext = createContext<AuthContextValue | undefined>(
@@ -30,13 +31,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(true);
       try {
         const response = await restApi.get("/api/auth/me");
-        console.log("response", response);
+
         if (response.data.user) {
           const userData: AuthContextValue = {
             email: response.data.user?.email || "",
             name: response.data.user?.name || "",
             image: response.data.user?.image || null,
             completeOnBoarding: response.data.user?.completeOnBoarding,
+            username: response.data.user?.username,
           };
 
           dispatch(
@@ -45,6 +47,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               name: response.data.user.name,
               image: response.data.user.image || null,
               completeOnBoarding: response.data.user.completeOnBoarding,
+              username: response.data.user.username,
             })
           );
           setAuthenticatedUser(userData);
