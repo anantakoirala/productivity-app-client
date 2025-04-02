@@ -29,9 +29,6 @@ type Props = {};
 const User = (props: Props) => {
   const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    console.log("theme", theme);
-  }, [theme]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background">

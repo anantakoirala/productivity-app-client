@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api";
 import { onBoardingSlice } from "./OnBoarding/onBoardingSlice";
 import { userSlice } from "./User/userSlice";
+import { workspaceSlice } from "./Workspace/workspaceSlice";
 
 export const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
     [onBoardingSlice.name]: onBoardingSlice.reducer,
     [userSlice.name]: userSlice.reducer,
+    [workspaceSlice.name]: workspaceSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

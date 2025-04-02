@@ -56,7 +56,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({}),
-  tagTypes: [],
+  tagTypes: ["workspace"],
 });
 
 export const {} = api;

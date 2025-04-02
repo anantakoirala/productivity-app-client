@@ -4,7 +4,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import { ToggleSidebarProvider } from "@/contextProviders/ToogleSidebar";
 import { useIsMobile } from "@/hooks/user-mobile";
 import { RootState } from "@/redux/store";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -14,11 +14,12 @@ type Props = {
 
 const layout = ({ children }: Props) => {
   const router = useRouter();
+  const pathName = usePathname();
+
   const { completeOnBoarding } = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("complete", completeOnBoarding);
     if (completeOnBoarding === false) {
       router.push("/on-boarding");
     } else {
@@ -26,8 +27,6 @@ const layout = ({ children }: Props) => {
     }
   }, [completeOnBoarding, router]);
 
-  const isMobile = useIsMobile();
-  console.log("isMobile", isMobile);
   if (loading) {
     return <div>Loading...</div>;
   }
