@@ -15,7 +15,7 @@ const baseQueryWithReauth: typeof baseQuery = async (
 
   if (result.error && result.error.status === 401) {
     const message = (result.error.data as { message?: string })?.message;
-
+    console.log("status", result.error.status);
     if (message === "Unauthorized") {
       try {
         // Try refreshing the token

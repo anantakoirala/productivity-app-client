@@ -34,7 +34,6 @@ restApi.interceptors.response.use(
 
     if (error.response && error.response.status === 401) {
       const message = error.response.data?.message;
-      console.log("Axios Interceptor 401:", message);
 
       if (message === "Token not provided") {
         //window.location.href = "/signin"; // Redirect user to login
@@ -65,7 +64,7 @@ restApi.interceptors.response.use(
           } catch (refreshError) {
             console.error("Refresh token failed:", refreshError);
             isRefreshing = false;
-            //window.location.href = "/signin"; // Redirect if refresh fails
+            window.location.href = "/signin"; // Redirect if refresh fails
             return Promise.reject(refreshError);
           }
         }

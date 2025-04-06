@@ -13,7 +13,7 @@ import { signUpSchema, SignUpSchema } from "@/schema/SignUpSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -23,6 +23,8 @@ type Props = {};
 const Page = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -40,10 +42,13 @@ const Page = (props: Props) => {
   } = form;
 
   const onSubmit = async (data: SignUpSchema) => {
-    console.log("signup data", data);
     try {
       setIsLoading(true);
-      const response = await restApi.post("/api/auth/signup", data);
+
+      const response = await restApi.post("/api/auth/signup", {
+        ...data,
+        token: token ? token : "",
+      });
 
       toast.success(response?.data?.message);
       router.push("/signin");
@@ -52,6 +57,14 @@ const Page = (props: Props) => {
       setIsLoading(false);
       toast.error(error?.response?.data?.message);
       console.log("error", error.response.data.message);
+    }
+  };
+
+  const redirectToSignIn = () => {
+    if (token) {
+      router.push(`/signin?token=${token}`);
+    } else {
+      router.push("/signin");
     }
   };
   return (
@@ -133,12 +146,12 @@ const Page = (props: Props) => {
           </form>
         </CardContent>
       </Card>
-      <p className="text-sm text-center mt-2">
+      <div className="text-sm text-center mt-2 flex flex-row gap-1 items-center justify-center">
         Already have an account{" "}
-        <Link href={"/signin"} className="text-primary">
-          Sign In
-        </Link>
-      </p>
+        <div className="text-primary cursor-pointer" onClick={redirectToSignIn}>
+          Sign in
+        </div>
+      </div>
     </div>
   );
 };

@@ -14,7 +14,7 @@ import { signInSchema, SignInSchema } from "@/schema/SignInSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -23,6 +23,8 @@ type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -39,7 +41,10 @@ const Page = (props: Props) => {
 
   const onSubmit = async (data: SignInSchema) => {
     try {
-      const response = await restApi.post("/api/auth/signin", data);
+      const response = await restApi.post("/api/auth/signin", {
+        ...data,
+        token: token ? token : "",
+      });
       console.log("data", response);
       toast.success(response?.data?.message);
       router.push("/dashboard");
@@ -48,6 +53,15 @@ const Page = (props: Props) => {
       console.log("error", error);
     }
   };
+
+  const redirectToSignUp = () => {
+    if (token) {
+      router.push(`/register?token=${token}`);
+    } else {
+      router.push("/register");
+    }
+  };
+
   return (
     <div>
       <Card className="w-full min-w-[20rem] sm:min-w-[40rem] sm:w-auto ">
@@ -99,12 +113,12 @@ const Page = (props: Props) => {
           </form>
         </CardContent>
       </Card>
-      <p className="text-sm text-center mt-2">
+      <div className="text-sm text-center mt-2 flex flex-row gap-1 items-center justify-center">
         Dont have an account{" "}
-        <Link href={"/register"} className="text-primary">
+        <div className="text-primary cursor-pointer" onClick={redirectToSignUp}>
           Sign up
-        </Link>
-      </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -67,6 +67,7 @@ export const workspaceApi = api.injectEndpoints({
         };
       },
       providesTags: ["workspace"],
+      keepUnusedDataFor: 0,
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
@@ -184,6 +185,23 @@ export const workspaceApi = api.injectEndpoints({
         }
       },
     }),
+
+    getWorkspaceUserRole: builder.query({
+      query: ({ workspaceId }) => {
+        return {
+          url: `/api/workspace/user-role-for-workspace/${workspaceId}`,
+          method: "GET",
+          credentials: "include" as const,
+        };
+      },
+    }),
+    createInvitation: builder.mutation({
+      query: (data) => ({
+        url: `/api/workspace/create-invitation`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -195,4 +213,5 @@ export const {
   useSaceWorkspaceImageMutation,
   useUpdateWorkspaceMutation,
   useDeleteWorkspaceMutation,
+  useCreateInvitationMutation,
 } = workspaceApi;

@@ -119,7 +119,9 @@ const ThirdStep = (props: Props) => {
       formData.append("name", name as string);
       formData.append("useCase", useCase as string);
       formData.append("workspacename", data.workspacename);
-      formData.append("workspaceImage", data.workspaceImage);
+      if (data.workspaceImage) {
+        formData.append("workspaceImage", data.workspaceImage);
+      }
 
       const response = await saveWorkspace(formData).unwrap();
 
