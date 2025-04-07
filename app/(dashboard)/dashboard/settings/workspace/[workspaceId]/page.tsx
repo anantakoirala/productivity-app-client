@@ -46,8 +46,8 @@ const Page = (props: Props) => {
         <TabsContent tabIndex={1} value="overview">
           <WorkspaceSettingOverview />
         </TabsContent>
-        <TabsContent tabIndex={1} value="mebmers">
-          <WorkspaceMemberSettings />
+        <TabsContent tabIndex={1} value="members">
+          <WorkspaceMemberSettings workspaceId={workspaceId as string} />
         </TabsContent>
       </Tabs>
     </div>

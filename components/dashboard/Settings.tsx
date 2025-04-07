@@ -67,6 +67,7 @@ const Settings = (props: Props) => {
                 onClick={() =>
                   router.push(`/dashboard/settings/workspace/${myWorkspace.id}`)
                 }
+                key={myWorkspace.id}
               >
                 {/* Image div */}
                 <div className="w-12 h-full bg-muted rounded-l-sm">

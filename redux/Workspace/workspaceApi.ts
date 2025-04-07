@@ -5,6 +5,7 @@ import {
   setMyWOrkSpaceAsAdmin,
   setSettingWorkspace,
   setWorkspaces,
+  setWorkspaceSubscribers,
 } from "./workspaceSlice";
 
 export const workspaceApi = api.injectEndpoints({
@@ -202,6 +203,66 @@ export const workspaceApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    getWorkspaceSubscribers: builder.query({
+      query: ({ workspaceId }) => {
+        console.log("workspaceId", workspaceId);
+        return {
+          url: `/api/workspace/subscribers/${workspaceId}`,
+          method: "GET",
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result", result.data.subscribers);
+          dispatch(setWorkspaceSubscribers(result.data.subscribers));
+        } catch (error: any) {
+          console.log("updated error workspace subscribers");
+          console.log(error);
+        }
+      },
+    }),
+    changeUserRole: builder.mutation({
+      query: (data) => {
+        console.log("data aaaaa", data);
+        return {
+          url: `/api/workspace/change-user-role`,
+          method: "POST",
+          body: data,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result change user role", result);
+          dispatch(setWorkspaceSubscribers(result.data.subscribers));
+        } catch (error: any) {
+          console.log("updated error workspace subscribers");
+          console.log(error);
+        }
+      },
+    }),
+
+    removeUserFromWorkspace: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/workspace/remove-user`,
+          method: "POST",
+          body: data,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result change user role", result);
+          dispatch(setWorkspaceSubscribers(result.data.subscribers));
+        } catch (error: any) {
+          console.log("updated error workspace subscribers");
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
@@ -214,4 +275,7 @@ export const {
   useUpdateWorkspaceMutation,
   useDeleteWorkspaceMutation,
   useCreateInvitationMutation,
+  useLazyGetWorkspaceSubscribersQuery,
+  useChangeUserRoleMutation,
+  useRemoveUserFromWorkspaceMutation,
 } = workspaceApi;

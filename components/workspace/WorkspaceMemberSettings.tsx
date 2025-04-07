@@ -1,9 +1,16 @@
 import React from "react";
+import Members from "./settings/Members";
 
-type Props = {};
+type Props = {
+  workspaceId: string;
+};
 
-const WorkspaceMemberSettings = (props: Props) => {
-  return <div>WorkspaceMemberSettings</div>;
+const WorkspaceMemberSettings = ({ workspaceId }: Props) => {
+  return (
+    <div className="">
+      <Members workspaceId={workspaceId} />
+    </div>
+  );
 };
 
 export default WorkspaceMemberSettings;
