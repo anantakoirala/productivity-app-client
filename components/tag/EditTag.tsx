@@ -10,16 +10,17 @@ import { Button } from "../ui/button";
 import { EditTagEchemaType, EditTagSchema } from "@/schema/EditTagSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateTagMutation } from "@/redux/Tag/tagApi";
+import { useDeleteTagMutation, useUpdateTagMutation } from "@/redux/Tag/tagApi";
 import { handleApiError } from "@/lib/handleApiError";
 import toast from "react-hot-toast";
 
 type Props = {
   setTab: (tab: "list" | "newTag" | "editTag") => void;
   onUpdateActiveTags: (id: number, name: string, color: CustomColors) => void;
+  onDeleteActiveTags: (tagId: number) => void;
 };
 
-const EditTag = ({ setTab, onUpdateActiveTags }: Props) => {
+const EditTag = ({ setTab, onUpdateActiveTags, onDeleteActiveTags }: Props) => {
   const [selectedColor, setSelectedColor] = useState<CustomColors>(
     CustomColors.BLUE
   );
@@ -30,6 +31,7 @@ const EditTag = ({ setTab, onUpdateActiveTags }: Props) => {
   );
 
   const [updateTag, { isLoading }] = useUpdateTagMutation();
+  const [deleteTag, { isLoading: deleteTagLoading }] = useDeleteTagMutation();
 
   const tagColor = (providedColor: CustomColors) => {
     const base = "rounded-full w-6 h-6 border-2";
@@ -82,6 +84,18 @@ const EditTag = ({ setTab, onUpdateActiveTags }: Props) => {
       await updateTag({ id: editTagInfo.id, data: finaldata }).unwrap();
       onUpdateActiveTags(editTagInfo.id, data.name, selectedColor);
       toast.success("Tag updated successfully");
+      setTab("list");
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
+
+  const onDeleteTag = async (tagId: number) => {
+    console.log("tagId", tagId);
+    try {
+      await deleteTag({ id: tagId, workspaceId: activeWorkspaceId }).unwrap();
+      onDeleteActiveTags(tagId);
+      toast.success("Tag deleted successfully");
       setTab("list");
     } catch (error) {
       handleApiError(error);
@@ -141,13 +155,17 @@ const EditTag = ({ setTab, onUpdateActiveTags }: Props) => {
 
       <div className="flex gap-2">
         <Button
-          onClick={() => setTab("list")}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteTag(editTagInfo.id);
+          }}
           type="button"
-          className="w-1/2 h-fit py-1.5"
+          className="w-1/2 h-fit py-1.5 bg-red-700 hover:bg-red-600"
           size={"sm"}
           variant={"secondary"}
+          disabled={deleteTagLoading}
         >
-          Cancel
+          Delete
         </Button>
         <Button
           disabled={isLoading}

@@ -26,6 +26,7 @@ const NewTask = (props: Props) => {
 
   const [currentActiveTags, setCurrentActiveTags] = useState<Tag[]>([]);
 
+  // Add active tags
   const onSelectActiveTags = (tag: Tag) => {
     setCurrentActiveTags((prev) => {
       const checkAvailability = prev.find((p) => p.id === tag.id);
@@ -37,6 +38,7 @@ const NewTask = (props: Props) => {
     });
   };
 
+  // Update active tags while updating tags
   const onUpdateActiveTags = (
     id: number,
     name: string,
@@ -44,6 +46,13 @@ const NewTask = (props: Props) => {
   ) => {
     setCurrentActiveTags((prev) => {
       return prev.map((pre) => (pre.id === id ? { ...pre, name, color } : pre));
+    });
+  };
+
+  // Delete active tags
+  const onDeleteActiveTags = (tagId: number) => {
+    setCurrentActiveTags((prevTags) => {
+      return prevTags.filter((prev) => prev.id !== tagId);
     });
   };
 
@@ -141,6 +150,7 @@ const NewTask = (props: Props) => {
                   onSelectActiveTags={onSelectActiveTags}
                   currentActiveTags={currentActiveTags}
                   onUpdateActiveTags={onUpdateActiveTags}
+                  onDeleteActiveTags={onDeleteActiveTags}
                 />
                 {currentActiveTags.map((activeTag) => (
                   <LinkTag key={activeTag.id} tag={activeTag} />

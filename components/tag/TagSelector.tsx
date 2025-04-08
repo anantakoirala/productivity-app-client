@@ -17,12 +17,14 @@ type Props = {
   onSelectActiveTags: (tag: Tag) => void;
   currentActiveTags: Tag[];
   onUpdateActiveTags: (id: number, name: string, color: CustomColors) => void;
+  onDeleteActiveTags: (tagId: number) => void;
 };
 
 const TagSelector = ({
   onSelectActiveTags,
   currentActiveTags,
   onUpdateActiveTags,
+  onDeleteActiveTags,
 }: Props) => {
   const { workspaceTags } = useSelector((state: RootState) => state.workspace);
   return (
@@ -45,6 +47,7 @@ const TagSelector = ({
             onSelectActiveTags={onSelectActiveTags}
             currentActiveTags={currentActiveTags}
             onUpdateActiveTags={onUpdateActiveTags}
+            onDeleteActiveTags={onDeleteActiveTags}
           />
         ) : (
           <div>Loading...</div>

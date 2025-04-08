@@ -22,6 +22,7 @@ type Props = {
   onSelectActiveTags: (tag: Tag) => void;
   currentActiveTags: Tag[];
   onUpdateActiveTags: (id: number, name: string, color: CustomColors) => void;
+  onDeleteActiveTags: (tagId: number) => void;
 };
 
 const CommandContainer = ({
@@ -29,6 +30,7 @@ const CommandContainer = ({
   onSelectActiveTags,
   currentActiveTags,
   onUpdateActiveTags,
+  onDeleteActiveTags,
 }: Props) => {
   const [tab, setTab] = useState<"list" | "newTag" | "editTag">("list");
 
@@ -80,7 +82,11 @@ const CommandContainer = ({
       )}
       {tab === "editTag" && (
         <>
-          <EditTag setTab={setTab} onUpdateActiveTags={onUpdateActiveTags} />
+          <EditTag
+            setTab={setTab}
+            onUpdateActiveTags={onUpdateActiveTags}
+            onDeleteActiveTags={onDeleteActiveTags}
+          />
         </>
       )}
     </Command>
