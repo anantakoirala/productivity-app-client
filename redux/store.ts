@@ -4,6 +4,7 @@ import { api } from "./api";
 import { onBoardingSlice } from "./OnBoarding/onBoardingSlice";
 import { userSlice } from "./User/userSlice";
 import { workspaceSlice } from "./Workspace/workspaceSlice";
+import { tagSlice } from "./Tag/tagSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     [onBoardingSlice.name]: onBoardingSlice.reducer,
     [userSlice.name]: userSlice.reducer,
     [workspaceSlice.name]: workspaceSlice.reducer,
+    [tagSlice.name]: tagSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

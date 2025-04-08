@@ -6,6 +6,7 @@ import {
   setSettingWorkspace,
   setWorkspaces,
   setWorkspaceSubscribers,
+  setWorkspaceTags,
 } from "./workspaceSlice";
 
 export const workspaceApi = api.injectEndpoints({
@@ -84,7 +85,6 @@ export const workspaceApi = api.injectEndpoints({
     }),
     getWorkspace: builder.query({
       query: ({ id }) => {
-        console.log("id", id);
         return {
           url: `/api/workspace/${id}`,
           method: "GET",
@@ -137,7 +137,6 @@ export const workspaceApi = api.injectEndpoints({
     }),
     saceWorkspaceImage: builder.mutation({
       query: (data) => {
-        console.log("data api", data);
         return {
           url: `/api/workspace/upload-workspace-image`,
           method: "POST",
@@ -166,7 +165,6 @@ export const workspaceApi = api.injectEndpoints({
     }),
     deleteWorkspace: builder.mutation({
       query: (data) => {
-        console.log("data", data);
         return {
           url: `/api/workspace/delete-workspace`,
           method: "POST",
@@ -215,10 +213,28 @@ export const workspaceApi = api.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          console.log("result", result.data.subscribers);
+
           dispatch(setWorkspaceSubscribers(result.data.subscribers));
         } catch (error: any) {
-          console.log("updated error workspace subscribers");
+          console.log("error while updatting workspace subscribers");
+          console.log(error);
+        }
+      },
+    }),
+    getWorkspaceTags: builder.query({
+      query: ({ workspaceId }) => {
+        return {
+          url: `/api/workspace/tags/${workspaceId}`,
+          method: "GET",
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(setWorkspaceTags(result.data.tags));
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
           console.log(error);
         }
       },
@@ -278,4 +294,5 @@ export const {
   useLazyGetWorkspaceSubscribersQuery,
   useChangeUserRoleMutation,
   useRemoveUserFromWorkspaceMutation,
+  useLazyGetWorkspaceTagsQuery,
 } = workspaceApi;

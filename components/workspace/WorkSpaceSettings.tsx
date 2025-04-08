@@ -1,53 +1,70 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { RootState } from "@/redux/store";
+import { Brain, CalendarRange, Files, Map, PencilRuler } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React from "react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { buttonVariants } from "../ui/button";
 
 type Props = {};
 
 const WorkSpaceSettings = (props: Props) => {
   const router = useRouter();
+  const { workspace_id } = useParams();
   const { myWorkspaceAsAdmin } = useSelector(
     (state: RootState) => state.workspace
   );
+
+  const workspaceOptionsFields = useMemo(
+    () => [
+      {
+        href: `/dashboard/workspace/${workspace_id}/tasks`,
+        icon: <PencilRuler size={15} />,
+        title: "Tasks",
+      },
+      {
+        href: `/dashboard/workspace/${workspace_id}/mind-maps`,
+        icon: <Map size={15} />,
+        title: "Mind Maps",
+      },
+      {
+        href: `/dashboard/workspace/${workspace_id}/schedules`,
+        icon: <CalendarRange size={15} />,
+        title: "Schedules",
+      },
+      {
+        href: `/dashboard/workspace/${workspace_id}/study`,
+        icon: <Brain size={15} />,
+        title: "Study",
+      },
+      {
+        href: `/dashboard/workspace/${workspace_id}/files`,
+        icon: <Files size={15} />,
+        title: "Files",
+      },
+    ],
+    [workspace_id]
+  );
   return (
-    <div className="w-full h-full flex flex-col p-2 gap-2">
-      <span className="text-muted-foreground">Workspace Settings</span>
-      <div className="flex flex-col p-2 gap-1">
-        {myWorkspaceAsAdmin.map((myWorkspace) => (
-          <div
-            className="w-full h-10 flex flex-row gap-2 items-center hover:bg-primary/20 rounded-sm transition-colors duration-200 cursor-pointer"
-            onClick={() =>
-              router.push(`/dashboard/workspace/settings/${myWorkspace.id}`)
-            }
+    <div>
+      <p className="text-xs sm:text-sm uppercase text-muted-foreground">
+        Shortcuts
+      </p>
+      <div className="flex flex-col gap-2 w-full mt-2  items-start">
+        {workspaceOptionsFields.map((field, i) => (
+          <Link
+            href={field.href}
+            className={cn(
+              "flex flex-row gap-2 w-full  rounded-sm h-7 px-2 text-sm items-center hover:bg-muted transition-colors duration-100"
+            )}
+            key={i}
           >
-            {/* Image div */}
-            <div className="w-12 h-full bg-muted rounded-l-sm">
-              {myWorkspace.image ? (
-                <>
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_IMAGE_PATH}/${myWorkspace.image}`} // Adjust the path based on your setup
-                    alt={myWorkspace.name}
-                    width={40}
-                    height={40}
-                    className="rounded-sm object-cover w-full h-full"
-                  />
-                </>
-              ) : (
-                <>
-                  <span className="text-lg font-semibold w-full h-full flex items-center justify-center ">
-                    {myWorkspace.name[0].toUpperCase()}
-                  </span>
-                </>
-              )}
-            </div>
-            {/* Name div */}
-            <div className="w-full h-full truncate text-sm  flex flex-row items-center tracking-tight text-muted-foreground">
-              {myWorkspace.name}
-            </div>
-          </div>
+            {field.icon}
+            {field.title}
+          </Link>
         ))}
       </div>
     </div>

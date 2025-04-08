@@ -1,3 +1,4 @@
+import { CustomColors } from "@/components/tag/NewTag";
 import { UseCase } from "@/types/UseCase";
 import { WorkSpaceType } from "@/types/Workspace";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -12,6 +13,13 @@ type WorkspaceSubscribers = {
   workspaceId: number;
 };
 
+type WorkspaceTags = {
+  id: number;
+  name: string;
+  isActive: boolean;
+  color: CustomColors;
+};
+
 type initialState = {
   workspaces: WorkSpaceType[];
   activeWorkspaceId: number;
@@ -20,6 +28,7 @@ type initialState = {
   activeWorkspaceImage: string | null;
   settingWorkspace: { id: string; name: string; image: string | null };
   workspaceSubscribers: WorkspaceSubscribers[];
+  workspaceTags: WorkspaceTags[];
 };
 
 const initialState: initialState = {
@@ -30,6 +39,7 @@ const initialState: initialState = {
   activeWorkspaceImage: null,
   settingWorkspace: { id: "", name: "", image: null },
   workspaceSubscribers: [],
+  workspaceTags: [],
 };
 
 export const workspaceSlice = createSlice({
@@ -53,6 +63,10 @@ export const workspaceSlice = createSlice({
     setWorkspaceSubscribers: (state, action) => {
       state.workspaceSubscribers = action.payload;
     },
+    setWorkspaceTags: (state, action) => {
+      console.log("action payload", action.payload);
+      state.workspaceTags = action.payload;
+    },
   },
 });
 
@@ -62,5 +76,6 @@ export const {
   setMyWOrkSpaceAsAdmin,
   setSettingWorkspace,
   setWorkspaceSubscribers,
+  setWorkspaceTags,
 } = workspaceSlice.actions;
 export default workspaceSlice.reducer;

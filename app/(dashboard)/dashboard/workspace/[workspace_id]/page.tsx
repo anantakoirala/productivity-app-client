@@ -9,13 +9,6 @@ type Props = {
 };
 
 const Page = ({ params: { workspace_id } }: Props) => {
-  const [trigger, { isLoading }] = useLazyGetWorkspaceQuery();
-
-  useEffect(() => {
-    if (workspace_id) {
-      trigger({ id: workspace_id });
-    }
-  }, [workspace_id]);
   return <div>Page</div>;
 };
 
