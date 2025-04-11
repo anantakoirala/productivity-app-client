@@ -54,6 +54,7 @@ const Workspaces = (props: Props) => {
                       width={40}
                       height={40}
                       className="rounded-sm object-cover w-full h-full"
+                      priority
                     />
                   </TooltipTrigger>
                   <TooltipContent side="right" align="center">

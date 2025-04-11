@@ -29,6 +29,7 @@ type initialState = {
   settingWorkspace: { id: string; name: string; image: string | null };
   workspaceSubscribers: WorkspaceSubscribers[];
   workspaceTags: WorkspaceTags[];
+  workspaceTasks: { id: number; title: string; emoji: string | null }[];
 };
 
 const initialState: initialState = {
@@ -40,6 +41,7 @@ const initialState: initialState = {
   settingWorkspace: { id: "", name: "", image: null },
   workspaceSubscribers: [],
   workspaceTags: [],
+  workspaceTasks: [],
 };
 
 export const workspaceSlice = createSlice({
@@ -64,8 +66,10 @@ export const workspaceSlice = createSlice({
       state.workspaceSubscribers = action.payload;
     },
     setWorkspaceTags: (state, action) => {
-      console.log("action payload", action.payload);
       state.workspaceTags = action.payload;
+    },
+    setWorkspaceTasks: (state, action) => {
+      state.workspaceTasks = action.payload;
     },
   },
 });
@@ -77,5 +81,6 @@ export const {
   setSettingWorkspace,
   setWorkspaceSubscribers,
   setWorkspaceTags,
+  setWorkspaceTasks,
 } = workspaceSlice.actions;
 export default workspaceSlice.reducer;

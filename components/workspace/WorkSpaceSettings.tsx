@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { buttonVariants } from "../ui/button";
+import AddNewTask from "../tasks/AddNewTask";
 
 type Props = {};
 
@@ -66,6 +67,12 @@ const WorkSpaceSettings = (props: Props) => {
             {field.title}
           </Link>
         ))}
+      </div>
+      <div className="">
+        <p>Actions</p>
+        <div className="">
+          <AddNewTask />
+        </div>
       </div>
     </div>
   );

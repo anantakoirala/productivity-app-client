@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DropdownMenu, DropdownMenuContent } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import Picker from "@emoji-mart/react";
@@ -6,6 +6,8 @@ import data from "@emoji-mart/data";
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type Props = {
   setEmojiValue: (emoji: string) => void;
@@ -15,6 +17,8 @@ const EmojiSelector = ({ setEmojiValue }: Props) => {
   const { theme } = useTheme();
   const [selectedEmoji, setSelectedEmoji] = useState("🧠");
   const [isOpen, setIsOpen] = useState(false);
+
+  const { task } = useSelector((state: RootState) => state.task);
 
   const emojiTheme = useMemo(() => {
     switch (theme) {
@@ -26,6 +30,13 @@ const EmojiSelector = ({ setEmojiValue }: Props) => {
         return "light";
     }
   }, [theme]);
+
+  useEffect(() => {
+    if (task.emoji) {
+      setSelectedEmoji(task.emoji);
+    }
+  }, [task.emoji]);
+
   return (
     <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger

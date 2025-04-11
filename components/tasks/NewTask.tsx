@@ -19,12 +19,44 @@ import { Tag } from "@/types/Tag";
 import { Button } from "../ui/button";
 import { CustomColors } from "../tag/NewTag";
 
+import {
+  useLazyGetIndividualTaskQuery,
+  useUpdateTaskMutation,
+} from "@/redux/task/taskApi";
+import { notFound, useParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { handleApiError } from "@/lib/handleApiError";
+import toast from "react-hot-toast";
+
 type Props = {};
+
+const Editor = dynamic(() => import("../editor/Editor"), {
+  ssr: false,
+  loading: () => <p>Loading editor...</p>, // optional loading fallback
+});
 
 const NewTask = (props: Props) => {
   const [content, setContent] = useState("");
 
+  const [pageNotFound, setPageNotFound] = useState(false);
+
+  const { taskId, workspace_id } = useParams();
+
   const [currentActiveTags, setCurrentActiveTags] = useState<Tag[]>([]);
+
+  const { activeWorkspaceId, workspaceTags } = useSelector(
+    (state: RootState) => state.workspace
+  );
+
+  const { task } = useSelector((state: RootState) => state.task);
+
+  const [trigger, { isLoading, data }] = useLazyGetWorkspaceTagsQuery();
+
+  const [getTask, { isLoading: getTaskLoading }] =
+    useLazyGetIndividualTaskQuery();
+
+  const [updateTask, { isLoading: updateTaskLoading }] =
+    useUpdateTaskMutation();
 
   // Add active tags
   const onSelectActiveTags = (tag: Tag) => {
@@ -56,22 +88,6 @@ const NewTask = (props: Props) => {
     });
   };
 
-  const onChangeHandle = (e: ContentEditableEvent) => {
-    setContent(e.target.value);
-  };
-
-  const [trigger, { isLoading }] = useLazyGetWorkspaceTagsQuery();
-
-  const { activeWorkspaceId, workspaceTags } = useSelector(
-    (state: RootState) => state.workspace
-  );
-
-  const onPasteHandler = (event: React.ClipboardEvent) => {
-    event.preventDefault();
-    const plainText = event.clipboardData.getData("text/plain");
-    setContent(plainText);
-  };
-
   const form = useForm<TaskSchemaType>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -82,10 +98,34 @@ const NewTask = (props: Props) => {
     },
   });
 
-  const { register, handleSubmit, setValue } = form;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = form;
 
-  const onSubmit = (data: TaskSchemaType) => {
-    console.log("data", data);
+  const onSubmit = async (data: TaskSchemaType) => {
+    try {
+      const activeTagIds = Array.isArray(currentActiveTags)
+        ? currentActiveTags.map((active) => active.id)
+        : [];
+
+      const finalData = {
+        ...data,
+        activeTagIds,
+        workspaceId: Number(workspace_id),
+        date: {
+          from: data.date?.from ? new Date(data.date.from) : undefined,
+          to: data.date?.to ? new Date(data.date.to) : undefined,
+        },
+      };
+
+      await updateTask({ taskId: taskId, data: finalData }).unwrap();
+      toast.success("Task updated successfully");
+    } catch (error) {
+      handleApiError(error);
+    }
   };
 
   const setEmojiValue = (emoji: string) => {
@@ -96,72 +136,101 @@ const NewTask = (props: Props) => {
     setValue("date", date);
   };
 
+  const setEditorContent = (content: any) => {
+    setValue("content", content);
+  };
+
   useEffect(() => {
     if (activeWorkspaceId) {
       trigger({ workspaceId: activeWorkspaceId });
     }
   }, [activeWorkspaceId]);
 
-  return (
-    // <div className="w-full flex items-start gap-2 sm:gap-4">
-    //   Logo
-    //   <div className="w-full flex flex-col gap-2">
-    //     <div className="relative text-xl font-semibold">
-    //       <ContentEditable
-    //         tagName="span"
-    //         className="outline-none inline-block min-h-0 relative z-20 w-full break-words break-all"
-    //         html={content}
-    //         onChange={onChangeHandle}
-    //         onPaste={onPasteHandler}
-    //         spellCheck={false}
-    //       />
-    //       {!content && (
-    //         <span className="text-muted-foreground pointer-events-none absolute left-0 top-0 min-h-0">
-    //           No Content
-    //         </span>
-    //       )}
-    //     </div>
-    //     <div className="w-full flex gap-1 flex-wrap flex-row">
-    //       <TaskCalendar />
-    //       <TagSelector />
-    //       <LinkTag />
-    //     </div>
-    //   </div>
-    //   {/* <EmojiSelector /> */}
-    // </div>
+  // Populate task details
+  useEffect(() => {
+    const fetchTask = async () => {
+      if (taskId) {
+        try {
+          const response = await getTask({
+            taskId,
+            workspaceId: workspace_id,
+          }).unwrap();
 
-    <Card>
-      <form id="task-form" onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="py-4 sm:py-6">
-          <div className="w-full flex items-start gap-2 sm:gap-4 mb-4">
-            <EmojiSelector setEmojiValue={setEmojiValue} />
-            <div className="w-full flex flex-col ">
-              <TextareaAutosize
-                {...register("title")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.preventDefault();
-                }}
-                placeholder="Editor content"
-                className="w-full resize-none appearance-none overflow-hidden bg-transparent placeholder:text-muted-foreground text-2xl font-semibold focus:outline-none"
-              />
-              <div className="w-full gap-1 flex flex-wrap  flex-row">
-                <TaskCalendar setDateValue={setDateValue} />
-                <TagSelector
-                  onSelectActiveTags={onSelectActiveTags}
-                  currentActiveTags={currentActiveTags}
-                  onUpdateActiveTags={onUpdateActiveTags}
-                  onDeleteActiveTags={onDeleteActiveTags}
-                />
-                {currentActiveTags.map((activeTag) => (
-                  <LinkTag key={activeTag.id} tag={activeTag} />
-                ))}
+          setValue("title", response.task.title);
+          setValue("content", response.task.content);
+          setValue("icon", response.task.emoji);
+          // Do something with response, e.g., setState
+        } catch (error: any) {
+          if (error?.status === 404) {
+            setPageNotFound(true);
+          }
+          console.error("Error fetching task:", error);
+          // Optionally handle rejected error
+        }
+      }
+    };
+
+    fetchTask();
+  }, [taskId, workspace_id]);
+
+  // Populate active tags
+  useEffect(() => {
+    if (task.taskTags.length > 0) {
+      setCurrentActiveTags(task.taskTags);
+    }
+  }, [task.taskTags]);
+
+  if (pageNotFound) {
+    notFound();
+  }
+
+  return (
+    <>
+      {getTaskLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <Card>
+          <form id="task-form" onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="py-4 sm:py-6 flex flex-col gap-10">
+              <div className="w-full flex items-start gap-2 sm:gap-4 mb-4">
+                <EmojiSelector setEmojiValue={setEmojiValue} />
+                <div className="w-full flex flex-col ">
+                  <TextareaAutosize
+                    {...register("title")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.preventDefault();
+                    }}
+                    placeholder="Editor content"
+                    className="w-full resize-none appearance-none overflow-hidden bg-transparent placeholder:text-muted-foreground text-2xl font-semibold focus:outline-none"
+                  />
+                  <div className="w-full gap-1 flex flex-wrap  flex-row">
+                    <TaskCalendar setDateValue={setDateValue} />
+                    <TagSelector
+                      onSelectActiveTags={onSelectActiveTags}
+                      currentActiveTags={currentActiveTags}
+                      onUpdateActiveTags={onUpdateActiveTags}
+                      onDeleteActiveTags={onDeleteActiveTags}
+                    />
+                    {currentActiveTags.map((activeTag) => (
+                      <LinkTag key={activeTag.id} tag={activeTag} />
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <Button type="submit">Submit</Button>
-        </CardContent>
-      </form>
-    </Card>
+              <Editor setEditorContent={setEditorContent} />
+              {errors && errors.date && (
+                <span className="text-red-600 text-sm">
+                  {errors?.date.message}
+                </span>
+              )}
+              <Button type="submit" disabled={updateTaskLoading}>
+                Update
+              </Button>
+            </CardContent>
+          </form>
+        </Card>
+      )}
+    </>
   );
 };
 

@@ -53,16 +53,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setAuthenticatedUser(userData);
         }
       } catch (error: any) {
-        if (
-          error?.response?.status === 401 &&
-          error.response.data?.message !== "Unauthorized - Invalid token"
-        ) {
-          //router.push("/signin");
-        } else {
-          console.error("Error fetching user data:", error);
-          // Handle other errors
-          //router.push("/signin");
-        }
+        console.log("error", error.message);
       } finally {
         setLoading(false);
       }

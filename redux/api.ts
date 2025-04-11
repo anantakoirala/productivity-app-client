@@ -15,7 +15,7 @@ const baseQueryWithReauth: typeof baseQuery = async (
 
   if (result.error && result.error.status === 401) {
     const message = (result.error.data as { message?: string })?.message;
-    console.log("status", result.error.status);
+    console.log("status aaa", result.error.status);
     if (message === "Unauthorized") {
       try {
         // Try refreshing the token
@@ -24,7 +24,7 @@ const baseQueryWithReauth: typeof baseQuery = async (
           api,
           extraOptions
         );
-
+        console.log("refrehs redux", refreshResult);
         if (refreshResult.data) {
           const { token } = refreshResult.data as { token: string };
 
@@ -56,7 +56,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({}),
-  tagTypes: ["workspace"],
+  tagTypes: ["workspace", "singleWorkspace"],
 });
 
 export const {} = api;

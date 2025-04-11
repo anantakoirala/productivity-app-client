@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {};
 
-const Notfound = (props: Props) => {
+const NotFound = (props: Props) => {
   return (
     <div>
       <h2>Not Found</h2>
@@ -15,4 +15,4 @@ const Notfound = (props: Props) => {
   );
 };
 
-export default Notfound;
+export default NotFound;

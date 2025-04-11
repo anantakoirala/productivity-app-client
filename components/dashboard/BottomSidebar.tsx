@@ -25,34 +25,23 @@ const BottomSidebar = (props: Props) => {
   return (
     <div className="flex flex-col gap-4 ">
       <ThemeSwitcher />
-      <HoverCard openDelay={250} closeDelay={250}>
-        <HoverCardTrigger tabIndex={1}>
-          <Button
-            onClick={() => {
-              logOut();
-            }}
-            variant={"ghost"}
-            size={"icon"}
-          >
-            <LogOutIcon />
-          </Button>
-        </HoverCardTrigger>
-      </HoverCard>
-      <HoverCard openDelay={250} closeDelay={250}>
-        <HoverCardTrigger tabIndex={1}>
-          <ActiveLink
-            include="settings"
-            variant="ghost"
-            size={"icon"}
-            href="/dashboard/settings"
-          >
-            <Settings2 />
-          </ActiveLink>
-        </HoverCardTrigger>
-        <HoverCardContent align="start">
-          <span>Settings</span>
-        </HoverCardContent>
-      </HoverCard>
+      <Button
+        onClick={() => {
+          logOut();
+        }}
+        variant={"ghost"}
+        size={"icon"}
+      >
+        <LogOutIcon />
+      </Button>
+      <ActiveLink
+        include="settings"
+        variant="ghost"
+        size={"icon"}
+        href="/dashboard/settings"
+      >
+        <Settings2 />
+      </ActiveLink>
     </div>
   );
 };

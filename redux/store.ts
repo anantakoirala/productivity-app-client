@@ -5,6 +5,7 @@ import { onBoardingSlice } from "./OnBoarding/onBoardingSlice";
 import { userSlice } from "./User/userSlice";
 import { workspaceSlice } from "./Workspace/workspaceSlice";
 import { tagSlice } from "./Tag/tagSlice";
+import { taskSlice } from "./task/taskSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     [userSlice.name]: userSlice.reducer,
     [workspaceSlice.name]: workspaceSlice.reducer,
     [tagSlice.name]: tagSlice.reducer,
+    [taskSlice.name]: taskSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

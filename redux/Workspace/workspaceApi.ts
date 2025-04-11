@@ -7,6 +7,7 @@ import {
   setWorkspaces,
   setWorkspaceSubscribers,
   setWorkspaceTags,
+  setWorkspaceTasks,
 } from "./workspaceSlice";
 
 export const workspaceApi = api.injectEndpoints({
@@ -91,17 +92,20 @@ export const workspaceApi = api.injectEndpoints({
           credentials: "include" as const,
         };
       },
+      providesTags: ["singleWorkspace"],
 
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          // console.log("result workspace", result.data.workspace);
+
           dispatch(
             setActiveWorkspace({
               id: result.data.workspace.id,
               name: result.data.workspace.name,
             })
           );
+
+          dispatch(setWorkspaceTasks(result.data.workspace.tasks));
         } catch (error: any) {
           console.log("updated errir");
           console.log(error);
@@ -239,6 +243,25 @@ export const workspaceApi = api.injectEndpoints({
         }
       },
     }),
+    getWorkspaceTasks: builder.query({
+      query: ({ workspaceId }) => {
+        return {
+          url: `/api/workspace/tasks/${workspaceId}`,
+          method: "GET",
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result", result);
+          //dispatch(setWorkspaceTags(result.data.tags));
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
     changeUserRole: builder.mutation({
       query: (data) => {
         console.log("data aaaaa", data);
@@ -286,6 +309,7 @@ export const {
   useCreateWorkspaceMutation,
   useLazyGetAllWorkspacesQuery,
   useLazyGetWorkspaceQuery,
+  useGetWorkspaceQuery,
   useLazyGetWorkspaceSettingQuery,
   useSaceWorkspaceImageMutation,
   useUpdateWorkspaceMutation,
@@ -295,4 +319,5 @@ export const {
   useChangeUserRoleMutation,
   useRemoveUserFromWorkspaceMutation,
   useLazyGetWorkspaceTagsQuery,
+  useLazyGetWorkspaceTasksQuery,
 } = workspaceApi;
