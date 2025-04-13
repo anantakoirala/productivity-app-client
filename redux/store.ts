@@ -6,6 +6,7 @@ import { userSlice } from "./User/userSlice";
 import { workspaceSlice } from "./Workspace/workspaceSlice";
 import { tagSlice } from "./Tag/tagSlice";
 import { taskSlice } from "./task/taskSlice";
+import { mindMapSlice } from "./MindMap/mindMapSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     [workspaceSlice.name]: workspaceSlice.reducer,
     [tagSlice.name]: tagSlice.reducer,
     [taskSlice.name]: taskSlice.reducer,
+    [mindMapSlice.name]: mindMapSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

@@ -33,7 +33,7 @@ const layout = ({ children }: Props) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  return <div>{children}</div>;
+  return <div className="h-full">{children}</div>;
 };
 
 export default layout;

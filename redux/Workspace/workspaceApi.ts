@@ -2,8 +2,11 @@ import { api } from "../api";
 import { setImage, setUserData } from "../User/userSlice";
 import {
   setActiveWorkspace,
+  setFullWorkspaceData,
   setMyWOrkSpaceAsAdmin,
   setSettingWorkspace,
+  setUserRoleForWorkspace,
+  setWorkspaceMindMaps,
   setWorkspaces,
   setWorkspaceSubscribers,
   setWorkspaceTags,
@@ -98,14 +101,17 @@ export const workspaceApi = api.injectEndpoints({
         try {
           const result = await queryFulfilled;
 
+          const workspace = result.data.workspace;
           dispatch(
-            setActiveWorkspace({
-              id: result.data.workspace.id,
-              name: result.data.workspace.name,
+            setFullWorkspaceData({
+              id: workspace.id,
+              name: workspace.name,
+              tasks: workspace.tasks,
+              mindMaps: workspace.mindMaps,
+              userRole: workspace.Subscriber[0].useRole,
+              tags: workspace.tags,
             })
           );
-
-          dispatch(setWorkspaceTasks(result.data.workspace.tasks));
         } catch (error: any) {
           console.log("updated errir");
           console.log(error);

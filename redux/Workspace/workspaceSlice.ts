@@ -30,6 +30,8 @@ type initialState = {
   workspaceSubscribers: WorkspaceSubscribers[];
   workspaceTags: WorkspaceTags[];
   workspaceTasks: { id: number; title: string; emoji: string | null }[];
+  userRoleForWorkspace: "ADMIN" | "CAN_EDIT" | "READ_ONLY";
+  workspaceMindMaps: { id: number; title: string }[];
 };
 
 const initialState: initialState = {
@@ -42,6 +44,8 @@ const initialState: initialState = {
   workspaceSubscribers: [],
   workspaceTags: [],
   workspaceTasks: [],
+  userRoleForWorkspace: "READ_ONLY",
+  workspaceMindMaps: [],
 };
 
 export const workspaceSlice = createSlice({
@@ -71,6 +75,30 @@ export const workspaceSlice = createSlice({
     setWorkspaceTasks: (state, action) => {
       state.workspaceTasks = action.payload;
     },
+    setUserRoleForWorkspace: (state, action) => {
+      state.userRoleForWorkspace = action.payload;
+    },
+    setWorkspaceMindMaps: (state, action) => {
+      state.workspaceMindMaps = action.payload;
+    },
+    setFullWorkspaceData: (
+      state,
+      action: PayloadAction<{
+        id: number;
+        name: string;
+        tasks: { id: number; title: string; emoji: string | null }[];
+        mindMaps: { id: number; title: string }[];
+        userRole: "ADMIN" | "CAN_EDIT" | "READ_ONLY";
+        tags: WorkspaceTags[];
+      }>
+    ) => {
+      state.activeWorkspaceId = action.payload.id;
+      state.activeWorkSpaceName = action.payload.name;
+      state.workspaceTasks = action.payload.tasks;
+      state.workspaceMindMaps = action.payload.mindMaps;
+      state.userRoleForWorkspace = action.payload.userRole;
+      state.workspaceTags = action.payload.tags;
+    },
   },
 });
 
@@ -82,5 +110,8 @@ export const {
   setWorkspaceSubscribers,
   setWorkspaceTags,
   setWorkspaceTasks,
+  setUserRoleForWorkspace,
+  setWorkspaceMindMaps,
+  setFullWorkspaceData,
 } = workspaceSlice.actions;
 export default workspaceSlice.reducer;

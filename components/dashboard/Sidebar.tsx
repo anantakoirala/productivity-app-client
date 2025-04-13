@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ShortCutSidebar from "./ShortCutSidebar";
-import OptionsSidebar from "./OptionsSidebar";
+import OptionsSidebar from "./OptionSidebar/OptionsSidebar";
 import CloseSideBar from "../CloseSideBar";
 import { useToggleSidebar } from "@/contextProviders/ToogleSidebar";
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, PencilRuler } from "lucide-react";
+import { ChevronDown, ChevronUp, Map, PencilRuler } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useLazyGetWorkspaceTasksQuery } from "@/redux/Workspace/workspaceApi";
@@ -12,8 +12,9 @@ type Props = {};
 
 const WorkSpaceOptions = (props: Props) => {
   const [openTask, setIsOpenTask] = useState<boolean>(false);
+  const [openMindMap, setIsOpenMindMap] = useState<boolean>(false);
 
-  const { activeWorkspaceId, workspaceTasks } = useSelector(
+  const { activeWorkspaceId, workspaceTasks, workspaceMindMaps } = useSelector(
     (state: RootState) => state.workspace
   );
   const [trigger, { isLoading }] = useLazyGetWorkspaceTasksQuery();
@@ -37,6 +38,8 @@ const WorkSpaceOptions = (props: Props) => {
         </div>
         {openTask ? <ChevronUp /> : <ChevronDown />}
       </Button>
+
+      {/* Tasks */}
       <div className="ml-4 text-sm my-1">
         {openTask && (
           <>
@@ -51,6 +54,39 @@ const WorkSpaceOptions = (props: Props) => {
                 >
                   <span>{task.emoji}</span>
                   <span className="truncate">{task.title}</span>
+                </Link>
+              ))}
+          </>
+        )}
+      </div>
+      <Button
+        onClick={() => {
+          setIsOpenMindMap((prev) => !prev);
+        }}
+        variant={"ghost"}
+        size={"sm"}
+        className="w-full justify-between"
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Map size={15} />
+          MindMaps
+        </div>
+        {openMindMap ? <ChevronUp /> : <ChevronDown />}
+      </Button>
+      {/* Mind map */}
+      <div className="ml-4 text-sm my-1">
+        {openMindMap && (
+          <>
+            {workspaceMindMaps &&
+              workspaceMindMaps.map((mindmap) => (
+                <Link
+                  href={`/dashboard/workspace/${activeWorkspaceId}/mind-maps/mind-map/${mindmap.id}`}
+                  key={mindmap.id}
+                  className={cn(
+                    "flex flex-row gap-2 w-full  rounded-sm h-7 px-2 text-sm items-center hover:bg-muted transition-colors duration-100"
+                  )}
+                >
+                  <span className="truncate">{mindmap.title}</span>
                 </Link>
               ))}
           </>

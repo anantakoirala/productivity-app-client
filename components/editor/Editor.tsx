@@ -38,6 +38,9 @@ type Props = {
 
 const Editor = ({ setEditorContent }: Props) => {
   const { task } = useSelector((state: RootState) => state.task);
+  const { userRoleForWorkspace } = useSelector(
+    (state: RootState) => state.workspace
+  );
   const editor = useEditor({
     editorProps: {
       handleDrop: () => {
@@ -67,6 +70,7 @@ const Editor = ({ setEditorContent }: Props) => {
       }),
     ],
     content: task.content ? task.content : ``,
+    editable: userRoleForWorkspace === "READ_ONLY" ? false : true,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       setEditorContent(editor.getJSON());

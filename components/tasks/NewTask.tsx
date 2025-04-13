@@ -44,9 +44,8 @@ const NewTask = (props: Props) => {
 
   const [currentActiveTags, setCurrentActiveTags] = useState<Tag[]>([]);
 
-  const { activeWorkspaceId, workspaceTags } = useSelector(
-    (state: RootState) => state.workspace
-  );
+  const { activeWorkspaceId, workspaceTags, userRoleForWorkspace } =
+    useSelector((state: RootState) => state.workspace);
 
   const { task } = useSelector((state: RootState) => state.task);
 
@@ -223,9 +222,20 @@ const NewTask = (props: Props) => {
                   {errors?.date.message}
                 </span>
               )}
-              <Button type="submit" disabled={updateTaskLoading}>
-                Update
-              </Button>
+              {userRoleForWorkspace !== "READ_ONLY" && (
+                <div className="flex flex-row gap-2 items-center justify-between w-full">
+                  <Button
+                    type="submit"
+                    disabled={updateTaskLoading}
+                    className="bg-red-700 hover:bg-red-600"
+                  >
+                    Delete
+                  </Button>
+                  <Button type="submit" disabled={updateTaskLoading}>
+                    Update
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </form>
         </Card>

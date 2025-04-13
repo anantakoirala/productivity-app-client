@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -8,6 +7,7 @@ import { useCreateTaskMutation } from "@/redux/task/taskApi";
 import { handleApiError } from "@/lib/handleApiError";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 type Props = {};
 
@@ -38,7 +38,7 @@ const AddNewTask = (props: Props) => {
     <Button
       disabled={isLoading}
       onClick={onCreateTask}
-      className="justify-start items-center gap-2"
+      className="justify-start items-center gap-2 w-full"
       variant={"ghost"}
       size={"sm"}
     >

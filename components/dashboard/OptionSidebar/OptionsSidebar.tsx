@@ -1,12 +1,13 @@
 "use client";
 import { useParams, usePathname } from "next/navigation";
 import React from "react";
-import Settings from "./Settings";
-import WorkSpaceSettings from "../workspace/WorkSpaceSettings";
+import Settings from "../Settings";
+import WorkSpaceSettings from "../../workspace/WorkSpaceSettings";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import WorkSpaceOptions from "../workspace/WorkSpaceOptions";
-import AddNewTask from "../tasks/AddNewTask";
+import WorkSpaceOptions from "../../workspace/WorkSpaceOptions";
+import AddNewTask from "./AddNewTask";
+import AddNewMindMap from "./AddNewMindMap";
 
 type Props = {};
 
@@ -17,6 +18,7 @@ const OptionsSidebar = (props: Props) => {
     (state: RootState) => state.workspace
   );
 
+  // Remove option sidebar
   if (
     pathName === "/dashboard" ||
     pathName.includes(`/dashboard/workspace/${workspace_id}/tasks/task`)
@@ -34,8 +36,9 @@ const OptionsSidebar = (props: Props) => {
             <p className="text-xs sm:text-sm uppercase text-muted-foreground">
               Actions
             </p>
-            <div className="">
+            <div className="flex flex-col gap-2 w-full mt-2">
               <AddNewTask />
+              <AddNewMindMap />
             </div>
           </div>
         </>
