@@ -1,6 +1,14 @@
 "use client";
 import EmojiSelector from "@/components/EmojiSelector";
 import MindMap from "@/components/mindmaps/MindMap";
+import MindMapDeleteConfirmationDialog from "@/components/mindmaps/MindMapDeleteConfirmationDialog";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { handleApiError } from "@/lib/handleApiError";
 import { useLazyGetMindMapQuery } from "@/redux/MindMap/mindMapApi";
 import { RootState } from "@/redux/store";
@@ -9,6 +17,7 @@ import {
   MindMapInfoSchemaType,
 } from "@/schema/MindMapInfoSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Trash } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,6 +30,7 @@ const Page = () => {
   const [mindMapLoaded, setMindMapLoaded] = useState(false); // new state
   const [emoji, setEmoji] = useState<string | null>(null);
   const [title, setTitle] = useState<string | null>("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const { activeWorkSpaceName } = useSelector(
     (state: RootState) => state.workspace
@@ -77,6 +87,23 @@ const Page = () => {
             <div className="w-full resize-none appearance-none overflow-hidden bg-transparent placeholder:text-muted-foreground text-2xl font-semibold focus:outline-none">
               {title}
             </div>
+            {/* Delete button */}
+            <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    size={"icon"}
+                    onClick={() => setOpenDeleteDialog(true)}
+                  >
+                    <Trash size={22} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete Mindmap</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           {mindMapLoaded ? (
             <MindMap />
@@ -88,6 +115,12 @@ const Page = () => {
           {/* Only show when data is ready */}
         </>
       )}
+      <MindMapDeleteConfirmationDialog
+        openDeleteDialog={openDeleteDialog}
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        mind_map_id={mind_map_id as string}
+        workspace_id={workspace_id as string}
+      />
     </div>
   );
 };

@@ -1,6 +1,4 @@
 import { api } from "../api";
-import { setImage, setUserData } from "../User/userSlice";
-import { setWorkspaceTags } from "../Workspace/workspaceSlice";
 import { setMindMapInfo } from "./mindMapSlice";
 
 export const mindMapApi = api.injectEndpoints({
@@ -103,6 +101,14 @@ export const mindMapApi = api.injectEndpoints({
         }
       },
     }),
+    deleteMindMap: builder.mutation({
+      query: ({ workspaceId, mindMapId }) => ({
+        url: `/api/mindmap/${workspaceId}/${mindMapId}`,
+        method: "DELETE",
+        credentials: "include" as const,
+      }),
+      invalidatesTags: ["singleWorkspace"],
+    }),
   }),
 });
 
@@ -112,4 +118,5 @@ export const {
   useUpdateMindMapMutation,
   useUpdateMindMapTagsMutation,
   useUpdateMindMapInfoMutation,
+  useDeleteMindMapMutation,
 } = mindMapApi;
