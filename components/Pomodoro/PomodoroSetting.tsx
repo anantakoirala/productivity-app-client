@@ -122,7 +122,7 @@ const PomodoroSetting = () => {
               label="Work duration"
               name="workDuration"
               control={control}
-              min={1}
+              min={5}
               max={60}
             />
 
@@ -138,7 +138,7 @@ const PomodoroSetting = () => {
               label="Long break duration"
               name="longBreakDuration"
               control={control}
-              min={1}
+              min={10}
               max={45}
             />
 
@@ -146,7 +146,7 @@ const PomodoroSetting = () => {
               label="Long break interval"
               name="longBreakInterval"
               control={control}
-              min={1}
+              min={2}
               max={10}
             />
 
