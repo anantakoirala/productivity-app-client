@@ -1,5 +1,6 @@
 "use client";
 import EmojiSelector from "@/components/EmojiSelector";
+import AssignUserToMindmap from "@/components/mindmaps/AssignUserToMindMap/AssignUserToMindmap";
 import MindMap from "@/components/mindmaps/MindMap";
 import MindMapDeleteConfirmationDialog from "@/components/mindmaps/MindMapDeleteConfirmationDialog";
 import { Button } from "@/components/ui/button";
@@ -87,6 +88,8 @@ const Page = () => {
             <div className="w-full resize-none appearance-none overflow-hidden bg-transparent placeholder:text-muted-foreground text-2xl font-semibold focus:outline-none">
               {title}
             </div>
+            {/* Add user */}
+            <AssignUserToMindmap />
             {/* Delete button */}
             <TooltipProvider delayDuration={100}>
               <Tooltip>

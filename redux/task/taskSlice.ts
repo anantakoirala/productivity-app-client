@@ -16,6 +16,7 @@ type initialState = {
     date?: DateRange | undefined;
     taskTags: Tag[];
   };
+  taskAsignee: { id: number; name: string; username: string }[];
 };
 
 const initialState: initialState = {
@@ -29,6 +30,7 @@ const initialState: initialState = {
     date: undefined,
     taskTags: [],
   },
+  taskAsignee: [],
 };
 
 export const taskSlice = createSlice({
@@ -57,9 +59,27 @@ export const taskSlice = createSlice({
 
         state.task.taskTags = activeTag;
       }
+
+      if (action.payload.AssignedToTask.length > 0) {
+        const taskAsignee = action.payload.AssignedToTask;
+        const Asignee = taskAsignee.map((assignee: any) => assignee.user);
+        state.taskAsignee = Asignee;
+      }
+    },
+    setUserToTaskAssignee: (state, action) => {
+      state.taskAsignee.push(action.payload.user);
+    },
+    removeUserFromTaskAssignee: (state, action: PayloadAction<number>) => {
+      state.taskAsignee = state.taskAsignee.filter(
+        (user) => user.id !== action.payload
+      );
     },
   },
 });
 
-export const { setTaskInfo } = taskSlice.actions;
+export const {
+  setTaskInfo,
+  setUserToTaskAssignee,
+  removeUserFromTaskAssignee,
+} = taskSlice.actions;
 export default taskSlice.reducer;

@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { setMindMapInfo } from "./mindMapSlice";
+import { setMindMapInfo, setUserToMindmapAssignee } from "./mindMapSlice";
 
 export const mindMapApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -109,6 +109,43 @@ export const mindMapApi = api.injectEndpoints({
       }),
       invalidatesTags: ["singleWorkspace"],
     }),
+    asignUserToMindmap: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/mindmap/asign-user`,
+          method: "POST",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(setUserToMindmapAssignee(result.data.assignment));
+        } catch (error: any) {
+          console.log("error while updating mindmap assignee");
+          console.log(error);
+        }
+      },
+    }),
+    removeUserFromMindmap: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/mindmap/remove-user`,
+          method: "POST",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
@@ -119,4 +156,6 @@ export const {
   useUpdateMindMapTagsMutation,
   useUpdateMindMapInfoMutation,
   useDeleteMindMapMutation,
+  useAsignUserToMindmapMutation,
+  useRemoveUserFromMindmapMutation,
 } = mindMapApi;

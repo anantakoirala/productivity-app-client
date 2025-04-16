@@ -2,7 +2,7 @@ import { Tag } from "@/types/Tag";
 import { api } from "../api";
 
 import { setWorkspaceTags } from "../Workspace/workspaceSlice";
-import { setTaskInfo } from "./taskSlice";
+import { setTaskInfo, setUserToTaskAssignee } from "./taskSlice";
 
 export const taskApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -69,6 +69,48 @@ export const taskApi = api.injectEndpoints({
         }
       },
     }),
+    asignUser: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/task/asign-user`,
+          method: "POST",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          //console.log("result", result.data.assignment);
+
+          dispatch(setUserToTaskAssignee(result.data.assignment));
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
+    removeUserFromTask: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/task/remove-user`,
+          method: "POST",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result", result.data);
+
+          //dispatch(setUserToTaskAssignee(result.data.assignment));
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
@@ -76,4 +118,6 @@ export const {
   useCreateTaskMutation,
   useLazyGetIndividualTaskQuery,
   useUpdateTaskMutation,
+  useAsignUserMutation,
+  useRemoveUserFromTaskMutation,
 } = taskApi;

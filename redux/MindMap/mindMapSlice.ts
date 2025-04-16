@@ -20,6 +20,7 @@ type initialState = {
     emoji: string | null;
   };
   mindMapTags: MindMapTag[];
+  mindmapAsignee: { id: number; name: string; username: string }[];
 };
 
 const initialState: initialState = {
@@ -31,6 +32,7 @@ const initialState: initialState = {
     emoji: null,
   },
   mindMapTags: [],
+  mindmapAsignee: [],
 };
 
 export const mindMapSlice = createSlice({
@@ -47,9 +49,27 @@ export const mindMapSlice = createSlice({
       state.mindMap.emoji = emoji;
       state.mindMap.workspaceId = workSpaceId;
       state.mindMapTags = MindMapTag;
+
+      if (action.payload.AssignedToMindmap.length > 0) {
+        const mindmapAsignee = action.payload.AssignedToMindmap;
+        const Asignee = mindmapAsignee.map((assignee: any) => assignee.user);
+        state.mindmapAsignee = Asignee;
+      }
+    },
+    setUserToMindmapAssignee: (state, action) => {
+      state.mindmapAsignee.push(action.payload.user);
+    },
+    removeUserFromMindmapAssignee: (state, action: PayloadAction<number>) => {
+      state.mindmapAsignee = state.mindmapAsignee.filter(
+        (user) => user.id !== action.payload
+      );
     },
   },
 });
 
-export const { setMindMapInfo } = mindMapSlice.actions;
+export const {
+  setMindMapInfo,
+  setUserToMindmapAssignee,
+  removeUserFromMindmapAssignee,
+} = mindMapSlice.actions;
 export default mindMapSlice.reducer;

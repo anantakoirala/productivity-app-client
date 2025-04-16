@@ -27,6 +27,7 @@ import { notFound, useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { handleApiError } from "@/lib/handleApiError";
 import toast from "react-hot-toast";
+import AssignUser from "./AssignUser/AssignUser";
 
 type Props = {};
 
@@ -204,6 +205,7 @@ const NewTask = (props: Props) => {
                   />
                   <div className="w-full gap-1 flex flex-wrap  flex-row">
                     <TaskCalendar setDateValue={setDateValue} />
+                    <AssignUser />
                     <TagSelector
                       onSelectActiveTags={onSelectActiveTags}
                       currentActiveTags={currentActiveTags}
