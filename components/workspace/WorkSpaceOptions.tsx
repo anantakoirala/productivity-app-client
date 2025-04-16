@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, Map, PencilRuler } from "lucide-react";
+import { ChevronDown, ChevronUp, PencilRuler, Workflow } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useLazyGetWorkspaceTasksQuery } from "@/redux/Workspace/workspaceApi";
@@ -68,7 +68,7 @@ const WorkSpaceOptions = (props: Props) => {
         className="w-full justify-between"
       >
         <div className="flex items-center justify-center gap-2">
-          <Map size={15} />
+          <Workflow size={15} />
           MindMaps
         </div>
         {openMindMap ? <ChevronUp /> : <ChevronDown />}

@@ -8,6 +8,7 @@ import { RootState } from "@/redux/store";
 import WorkSpaceOptions from "../../workspace/WorkSpaceOptions";
 import AddNewTask from "./AddNewTask";
 import AddNewMindMap from "./AddNewMindMap";
+import PomodoroOptions from "@/components/Pomodoro/PomodoroOptions";
 
 type Props = {};
 
@@ -46,6 +47,7 @@ const OptionsSidebar = (props: Props) => {
       {pathName === `/dashboard/workspace/${activeWorkspaceId}/tasks` && (
         <p className="text-red-500">Tasks</p>
       )}
+      {pathName.includes(`/dashboard/pomodoro`) && <PomodoroOptions />}
     </div>
   );
 };

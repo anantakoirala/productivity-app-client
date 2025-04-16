@@ -1,24 +1,23 @@
 import React from "react";
 import { HoverCard, HoverCardTrigger } from "../ui/hover-card";
 import ActiveLink from "./ActiveLink";
-import { Home } from "lucide-react";
+import { BrainCircuit, CalendarDays, Home } from "lucide-react";
 import { HoverCardContent } from "@radix-ui/react-hover-card";
 
 type Props = {};
 
 const TopIcons = (props: Props) => {
   return (
-    <div>
-      <HoverCard openDelay={250} closeDelay={250}>
-        <HoverCardTrigger asChild>
-          <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard">
-            <Home />
-          </ActiveLink>
-        </HoverCardTrigger>
-        <HoverCardContent align="start">
-          <span>Home</span>
-        </HoverCardContent>
-      </HoverCard>
+    <div className="flex flex-col items-center gap-3">
+      <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard">
+        <Home />
+      </ActiveLink>
+      <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard/pomodoro">
+        <BrainCircuit />
+      </ActiveLink>
+      <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard/pomodoro">
+        <CalendarDays />
+      </ActiveLink>
     </div>
   );
 };
