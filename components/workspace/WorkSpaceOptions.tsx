@@ -34,7 +34,7 @@ const WorkSpaceOptions = (props: Props) => {
       >
         <div className="flex items-center justify-center gap-2">
           <PencilRuler size={15} />
-          Tasks
+          Today&apos;s Tasks
         </div>
         {openTask ? <ChevronUp /> : <ChevronDown />}
       </Button>

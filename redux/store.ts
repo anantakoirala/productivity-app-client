@@ -8,6 +8,8 @@ import { tagSlice } from "./Tag/tagSlice";
 import { taskSlice } from "./task/taskSlice";
 import { mindMapSlice } from "./MindMap/mindMapSlice";
 import { pomodoroSlice } from "./Pomodoro/pomodoroSlice";
+import { chatSlice } from "./Chat/chatSlice";
+import { projectSlice } from "./Project/ProjectSlice";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +21,8 @@ export const store = configureStore({
     [taskSlice.name]: taskSlice.reducer,
     [mindMapSlice.name]: mindMapSlice.reducer,
     [pomodoroSlice.name]: pomodoroSlice.reducer,
+    [chatSlice.name]: chatSlice.reducer,
+    [projectSlice.name]: projectSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

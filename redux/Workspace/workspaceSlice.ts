@@ -20,11 +20,17 @@ type WorkspaceTags = {
   color: CustomColors;
 };
 
+type Project = {
+  id: number;
+  title: string;
+};
+
 type initialState = {
   workspaces: WorkSpaceType[];
   activeWorkspaceId: number;
   activeWorkSpaceName: string;
   myWorkspaceAsAdmin: WorkSpaceType[];
+  projects: Project[];
   activeWorkspaceImage: string | null;
   settingWorkspace: { id: string; name: string; image: string | null };
   workspaceSubscribers: WorkspaceSubscribers[];
@@ -32,10 +38,12 @@ type initialState = {
   workspaceTasks: { id: number; title: string; emoji: string | null }[];
   userRoleForWorkspace: "ADMIN" | "CAN_EDIT" | "READ_ONLY";
   workspaceMindMaps: { id: number; title: string }[];
+  conversationId: number | null;
 };
 
 const initialState: initialState = {
   workspaces: [],
+  projects: [],
   activeWorkspaceId: 0,
   activeWorkSpaceName: "",
   myWorkspaceAsAdmin: [],
@@ -46,6 +54,7 @@ const initialState: initialState = {
   workspaceTasks: [],
   userRoleForWorkspace: "READ_ONLY",
   workspaceMindMaps: [],
+  conversationId: null,
 };
 
 export const workspaceSlice = createSlice({
@@ -90,6 +99,8 @@ export const workspaceSlice = createSlice({
         mindMaps: { id: number; title: string }[];
         userRole: "ADMIN" | "CAN_EDIT" | "READ_ONLY";
         tags: WorkspaceTags[];
+        conversation_id: number;
+        projects: Project[];
       }>
     ) => {
       state.activeWorkspaceId = action.payload.id;
@@ -98,6 +109,8 @@ export const workspaceSlice = createSlice({
       state.workspaceMindMaps = action.payload.mindMaps;
       state.userRoleForWorkspace = action.payload.userRole;
       state.workspaceTags = action.payload.tags;
+      state.conversationId = action.payload.conversation_id;
+      state.projects = action.payload.projects;
     },
   },
 });

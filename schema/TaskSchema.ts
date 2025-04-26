@@ -4,24 +4,27 @@ export const taskSchema = z
   .object({
     icon: z.string().optional(),
     title: z.string().optional(),
+    projectId: z.coerce.number().min(1, "Project is required"),
     date: z
       .object({
-        from: z.date().optional(),
+        from: z.date().optional(), // don't make it required here
         to: z.date().optional(),
       })
       .nullable()
       .optional(),
     content: z.any(),
   })
-  .refine((data) => data.date?.from && data.date?.to, {
-    message: "Both start and end dates are required",
-    path: ["date"],
+  // Require from date explicitly
+  .refine((data) => data.date?.from, {
+    message: "Start date is required",
+    path: ["date.from"],
   })
+  // Only check to > from if from exists
   .refine(
     (data) =>
-      data.date?.from &&
-      data.date?.to &&
-      data.date.to.getTime() > data.date.from.getTime(),
+      !data.date?.from || // if no from, skip
+      !data.date?.to || // if no to, skip
+      data.date.to.getTime() > data.date.from.getTime(), // otherwise validate
     {
       message: "End date must be after start date",
       path: ["date.to"],

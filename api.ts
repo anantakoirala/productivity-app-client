@@ -58,12 +58,11 @@ restApi.interceptors.response.use(
             onRefreshed();
             isRefreshing = false;
 
-            // Retry original request — cookies will be sent automatically
             return restApi(originalRequest);
           } catch (refreshError) {
             console.error("Refresh token failed:", refreshError);
             isRefreshing = false;
-            window.location.href = "/signin"; // Redirect if refresh fails
+            window.location.href = "/signin";
             return Promise.reject(refreshError);
           }
         }

@@ -110,6 +110,8 @@ export const workspaceApi = api.injectEndpoints({
               mindMaps: workspace.mindMaps,
               userRole: workspace.Subscriber[0].useRole,
               tags: workspace.tags,
+              conversation_id: workspace.Conversation[0].id,
+              projects: workspace.WorkspaceProject,
             })
           );
         } catch (error: any) {

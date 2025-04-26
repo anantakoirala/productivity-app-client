@@ -15,7 +15,7 @@ const baseQueryWithReauth: typeof baseQuery = async (
 
   if (result.error && result.error.status === 401) {
     const message = (result.error.data as { message?: string })?.message;
-    console.log("status aaa", result.error.status);
+    console.log("message", message);
     if (message === "Unauthorized") {
       try {
         // Try refreshing the token
@@ -24,7 +24,7 @@ const baseQueryWithReauth: typeof baseQuery = async (
           api,
           extraOptions
         );
-        console.log("refrehs redux", refreshResult);
+
         if (refreshResult.data) {
           const { token } = refreshResult.data as { token: string };
 
@@ -32,17 +32,14 @@ const baseQueryWithReauth: typeof baseQuery = async (
           result = await baseQuery(args, api, extraOptions);
         } else {
           // Redirect to login if refresh fails
-
           window.location.href = "/signin";
         }
       } catch {
         // Refresh failed, redirect to login
-
         window.location.href = "/signin";
       }
     } else if (message === "Token not provided") {
       // Redirect to login if token is missing
-
       window.location.href = "/signin";
     } else {
       window.location.href = "/signin";

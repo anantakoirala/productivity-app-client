@@ -15,7 +15,7 @@ const TopIcons = (props: Props) => {
       <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard/pomodoro">
         <BrainCircuit />
       </ActiveLink>
-      <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard/pomodoro">
+      <ActiveLink variant={"ghost"} size={"icon"} href="/dashboard/calendar">
         <CalendarDays />
       </ActiveLink>
     </div>

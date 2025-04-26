@@ -4,12 +4,19 @@ import EmojiSelector from "../EmojiSelector";
 import TaskCalendar from "./TaskCalendar";
 import TagSelector from "../tag/TagSelector";
 import LinkTag from "../tag/LinkTag";
-import ContentEditable, { ContentEditableEvent } from "react-contenteditable";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useLazyGetWorkspaceTagsQuery } from "@/redux/Workspace/workspaceApi";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { taskSchema, TaskSchemaType } from "@/schema/TaskSchema";
 import { Card, CardContent } from "../ui/card";
@@ -45,7 +52,7 @@ const NewTask = (props: Props) => {
 
   const [currentActiveTags, setCurrentActiveTags] = useState<Tag[]>([]);
 
-  const { activeWorkspaceId, workspaceTags, userRoleForWorkspace } =
+  const { activeWorkspaceId, workspaceTags, userRoleForWorkspace, projects } =
     useSelector((state: RootState) => state.workspace);
 
   const { task } = useSelector((state: RootState) => state.task);
@@ -95,6 +102,7 @@ const NewTask = (props: Props) => {
       title: "",
       date: null,
       content: null,
+      projectId: task.projectId,
     },
   });
 
@@ -133,7 +141,15 @@ const NewTask = (props: Props) => {
   };
 
   const setDateValue = (date: DateRange | undefined) => {
-    setValue("date", date);
+    if (!date || !date.from) {
+      setValue("date", undefined); // or null if you use nullable
+      return;
+    }
+
+    setValue("date", {
+      from: date.from,
+      to: date.to,
+    });
   };
 
   const setEditorContent = (content: any) => {
@@ -180,6 +196,10 @@ const NewTask = (props: Props) => {
     }
   }, [task.taskTags]);
 
+  useEffect(() => {
+    console.log("errors", errors);
+  }, [errors]);
+
   if (pageNotFound) {
     notFound();
   }
@@ -219,23 +239,61 @@ const NewTask = (props: Props) => {
                 </div>
               </div>
               <Editor setEditorContent={setEditorContent} />
-              {errors && errors.date && (
+              {errors?.date?.from && (
                 <span className="text-red-600 text-sm">
-                  {errors?.date.message}
+                  {errors.date.from.message}
+                </span>
+              )}
+
+              {errors?.date?.to && (
+                <span className="text-red-600 text-sm">
+                  {errors.date.to.message}
                 </span>
               )}
               {userRoleForWorkspace !== "READ_ONLY" && (
-                <div className="flex flex-row gap-2 items-center justify-between w-full">
-                  <Button
-                    type="submit"
-                    disabled={updateTaskLoading}
-                    className="bg-red-700 hover:bg-red-600"
-                  >
-                    Delete
-                  </Button>
-                  <Button type="submit" disabled={updateTaskLoading}>
-                    Update
-                  </Button>
+                <div className="flex flex-col md:flex-row gap-2 items-center justify-between w-full">
+                  <div className="">
+                    {/* select field */}
+                    <Controller
+                      control={form.control}
+                      name="projectId"
+                      render={({ field }) => (
+                        <Select
+                          onValueChange={(val) => field.onChange(Number(val))}
+                          defaultValue={
+                            field.value ? String(field.value) : undefined
+                          }
+                        >
+                          <SelectTrigger className="bg-muted p-2 rounded border w-[250px]">
+                            <SelectValue placeholder="Choose a project" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {projects.map((project) => (
+                              <SelectItem
+                                key={project.id}
+                                value={project.id.toString()}
+                              >
+                                {project.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="flex flex-row gap-2">
+                    <Button
+                      type="submit"
+                      disabled={updateTaskLoading}
+                      className="bg-red-700 hover:bg-red-600"
+                    >
+                      Delete
+                    </Button>
+
+                    <Button type="submit" disabled={updateTaskLoading}>
+                      Update
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>

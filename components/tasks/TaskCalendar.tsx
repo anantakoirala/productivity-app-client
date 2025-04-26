@@ -23,19 +23,23 @@ const TaskCalendar = ({ setDateValue }: Props) => {
     setDateValue(date);
   };
 
+  const handleClearDate = () => {
+    setDate(undefined);
+    setDateValue(undefined); // Clear the selected date
+  };
+
   const { task } = useSelector((state: RootState) => state.task);
 
   useEffect(() => {
-    if (task.date) {
+    if (task.from) {
       const newDate = {
-        from: new Date(task.date.from!),
-        to: task.date.to ? new Date(task.date.to) : undefined,
+        from: new Date(task.from),
+        to: task.to ? new Date(task.to) : undefined,
       };
       setDate(newDate);
-      setDateValue(newDate); // ← this will sync it with the parent
+      setDateValue(newDate);
     }
-  }, [task.date]);
-
+  }, [task.from, task.to]);
   return (
     <div className={cn("flex items-center gap-1 ")}>
       <Popover>
@@ -79,6 +83,16 @@ const TaskCalendar = ({ setDateValue }: Props) => {
             onSelect={onSelectDateChange}
             numberOfMonths={1}
           />
+          <div className="mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-red-500"
+              onClick={handleClearDate}
+            >
+              Clear Date
+            </Button>
+          </div>
         </PopoverContent>
       </Popover>
     </div>

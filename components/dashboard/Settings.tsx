@@ -59,7 +59,7 @@ const Settings = (props: Props) => {
         <p className="text-xs sm:text-sm uppercase text-muted-foreground">
           Workspace
         </p>
-        <div className="flex flex-col gap-2 w-full mt-2 h-96 overflow-y-auto">
+        <div className="flex flex-col gap-2 w-full mt-2 h-96 hide-scrollbar overflow-y-auto">
           <div className="flex flex-col p-2 gap-1">
             {myWorkspaceAsAdmin.map((myWorkspace) => (
               <div

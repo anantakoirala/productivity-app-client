@@ -37,7 +37,7 @@ export const taskApi = api.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-
+          console.log("result", result);
           dispatch(setTaskInfo(result.data.task));
           //dispatch(setWorkspaceTags(result.data.tags));
         } catch (error: any) {
