@@ -92,6 +92,8 @@ const AddWorkspaceDialog = (props: Props) => {
       //   })
       // );
       toast.success("Workspace created successfully");
+      form.reset({ workspacename: "", workspaceImage: "" });
+      setImagePreview("");
       setOpen(false);
     } catch (error: any) {
       toast.error(error.data.message);
@@ -175,7 +177,7 @@ const AddWorkspaceDialog = (props: Props) => {
                 )}
               </div>
               <Button
-                disabled={!isValid}
+                disabled={!isValid || isLoading}
                 type="submit"
                 className="w-full max-w-md dark:text-white font-semibold"
               >

@@ -37,7 +37,7 @@ type Props = {
 };
 
 const Members = ({ workspaceId }: Props) => {
-  const roles = ["viewer", "admin", "editor"];
+  const roles = ["viewer", "admin", "editor", "owner"];
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [userIdToBeRemoved, setUserIdToBeRemoved] = useState<number | null>(
@@ -47,7 +47,7 @@ const Members = ({ workspaceId }: Props) => {
     null
   );
   const [trigger, { isLoading }] = useLazyGetWorkspaceSubscribersQuery();
-  const { workspaceSubscribers } = useSelector(
+  const { workspaceSubscribers, settingWorkspace } = useSelector(
     (state: RootState) => state.workspace
   );
 
@@ -147,42 +147,58 @@ const Members = ({ workspaceId }: Props) => {
                     <td className="px-4 py-2">{subscriber.name}</td>
                     <td className="px-4 py-2">{subscriber.userName}</td>
                     <td className="px-4 py-2 ">
-                      <Select
-                        disabled={changeUserRoleLoading}
-                        value={getRole(subscriber.userRole)}
-                        onValueChange={(newRole) =>
-                          handleRoleChange(
-                            newRole as "admin" | "editor" | "viewer",
-                            subscriber.userId,
-                            subscriber.workspaceId
-                          )
-                        }
-                      >
-                        <SelectTrigger className="w-full ">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="w-full">
-                          {roles.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role.toUpperCase()}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {subscriber.userRole === "OWNER" ? (
+                        <div className=" w-fit h-fit rounded-sm bg-muted p-1 cursor-pointer">
+                          OWNER
+                        </div>
+                      ) : (
+                        <Select
+                          disabled={
+                            changeUserRoleLoading ||
+                            !["OWNER", "ADMIN"].includes(settingWorkspace.role)
+                          }
+                          value={getRole(subscriber.userRole)}
+                          onValueChange={(newRole) =>
+                            handleRoleChange(
+                              newRole as "admin" | "editor" | "viewer",
+                              subscriber.userId,
+                              subscriber.workspaceId
+                            )
+                          }
+                        >
+                          <SelectTrigger className="w-full ">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="w-full">
+                            {roles
+                              .filter((role) => role !== "owner")
+                              .map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role.toUpperCase()}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </td>
                     <td className="px-4 py-2">
-                      <Button
-                        disabled={removeUserFromWorkspaceLoading}
-                        className=" bg-red-700 hover:bg-red-600"
-                        onClick={() =>
-                          handleRemoveClick(
-                            subscriber.userId,
-                            subscriber.workspaceId
-                          )
-                        }
-                      >
-                        Remove
-                      </Button>
+                      {subscriber.userRole !== "OWNER" && (
+                        <Button
+                          disabled={
+                            removeUserFromWorkspaceLoading ||
+                            settingWorkspace.role !== "OWNER"
+                          }
+                          className=" bg-red-700 hover:bg-red-600"
+                          onClick={() =>
+                            handleRemoveClick(
+                              subscriber.userId,
+                              subscriber.workspaceId
+                            )
+                          }
+                        >
+                          Remove
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}

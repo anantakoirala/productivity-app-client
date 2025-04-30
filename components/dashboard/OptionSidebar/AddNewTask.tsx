@@ -44,13 +44,6 @@ const AddNewTask = (props: Props) => {
 
   const [createTask, { isLoading }] = useCreateTaskMutation();
 
-  const onCreateTask = async () => {
-    try {
-    } catch (error) {
-      handleApiError(error);
-    }
-  };
-
   const form = useForm<AddNewTaskSchemaType>({
     resolver: zodResolver(addNewTaskSchema),
     defaultValues: {

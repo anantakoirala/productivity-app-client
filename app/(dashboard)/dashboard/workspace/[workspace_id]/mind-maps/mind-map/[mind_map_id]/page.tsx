@@ -1,5 +1,5 @@
 "use client";
-import EmojiSelector from "@/components/EmojiSelector";
+
 import AssignUserToMindmap from "@/components/mindmaps/AssignUserToMindMap/AssignUserToMindmap";
 import MindMap from "@/components/mindmaps/MindMap";
 import MindMapDeleteConfirmationDialog from "@/components/mindmaps/MindMapDeleteConfirmationDialog";
@@ -13,17 +13,12 @@ import {
 import { handleApiError } from "@/lib/handleApiError";
 import { useLazyGetMindMapQuery } from "@/redux/MindMap/mindMapApi";
 import { RootState } from "@/redux/store";
-import {
-  MindMapInfoSchema,
-  MindMapInfoSchemaType,
-} from "@/schema/MindMapInfoSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Trash } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+
 import { useSelector } from "react-redux";
-import TextareaAutosize from "react-textarea-autosize";
 
 const Page = () => {
   const { mind_map_id, workspace_id } = useParams();
@@ -33,7 +28,7 @@ const Page = () => {
   const [title, setTitle] = useState<string | null>("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
-  const { activeWorkSpaceName } = useSelector(
+  const { activeWorkSpaceName, userRoleForWorkspace } = useSelector(
     (state: RootState) => state.workspace
   );
 
@@ -89,24 +84,27 @@ const Page = () => {
               {title}
             </div>
             {/* Add user */}
-            <AssignUserToMindmap />
+            {userRoleForWorkspace !== "READ_ONLY" && <AssignUserToMindmap />}
             {/* Delete button */}
-            <TooltipProvider delayDuration={100}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    size={"icon"}
-                    onClick={() => setOpenDeleteDialog(true)}
-                  >
-                    <Trash size={22} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Delete Mindmap</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            {(userRoleForWorkspace === "OWNER" ||
+              userRoleForWorkspace === "ADMIN") && (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      size={"icon"}
+                      onClick={() => setOpenDeleteDialog(true)}
+                    >
+                      <Trash size={22} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete Mindmap</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
           {mindMapLoaded ? (
             <MindMap />

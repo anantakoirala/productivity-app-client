@@ -70,6 +70,7 @@ const WorkspaceSettingOverview = (props: Props) => {
           <div className="flex flex-col gap-1">
             <Label className="text-muted-foreground">Name</Label>
             <Input
+              disabled={settingWorkspace.role !== "OWNER"}
               placeholder="name"
               className="bg-muted"
               {...register("name")}
@@ -77,7 +78,7 @@ const WorkspaceSettingOverview = (props: Props) => {
           </div>
           <Button
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || settingWorkspace.role !== "OWNER"}
             className="w-auto max-w-md dark:text-white font-semibold"
           >
             save
@@ -87,7 +88,7 @@ const WorkspaceSettingOverview = (props: Props) => {
         <div className="py-4 sm:py-6 ">
           <Separator />
         </div>
-        <DeleteWorkspace />
+        {settingWorkspace.role === "OWNER" && <DeleteWorkspace />}
       </CardContent>
     </Card>
   );

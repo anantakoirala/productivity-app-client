@@ -1,19 +1,19 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import dayjs, { Dayjs } from "dayjs";
-import isSameOArfter from "dayjs/plugin/isSameOrAfter";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { CalendarItem } from "@/types/CalendarItem";
-
 import CalendarTasks from "./CalendarTasks";
 
-dayjs.extend(isSameOArfter);
+dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 type Props = {
-  day: Dayjs;
-  monthIndex: number; // New prop to check if the day is from the previous month
+  day: dayjs.Dayjs;
+  monthIndex: number;
   allTasks: CalendarItem[];
 };
 
@@ -22,14 +22,16 @@ const Day = ({ day, monthIndex, allTasks }: Props) => {
   const [dayTask, setDayTask] = useState<CalendarItem[]>([]);
 
   useEffect(() => {
-    const filterTasks = allTasks.filter((dayInfo, i) => {
-      const startDate = dayjs(dayInfo.taskDate?.from);
-      const endDate = dayInfo.taskDate?.to ? dayjs(dayInfo.taskDate?.to) : null;
+    const filterTasks = allTasks.filter((dayInfo) => {
+      if (!dayInfo.taskDate) return false; // No task date, skip
+      const taskDate = dayjs(dayInfo.taskDate); // Convert task.date to Dayjs object
 
-      if (startDate.isSame(day) && !endDate) return dayInfo;
-      else if (day.isSameOrAfter(startDate) && day.isSameOrBefore(endDate)) {
-        return dayInfo;
-      }
+      // Convert the UTC task date to the local time zone
+      const localTaskDate = dayjs(taskDate.toDate()); // `toDate()` converts to JavaScript Date object
+      const localDay = dayjs(day.toDate()); // Convert current day to a JavaScript Date object
+
+      // Match the same day (in local time)
+      return localTaskDate.isSame(localDay, "day");
     });
 
     setDayTask(filterTasks);
@@ -38,9 +40,9 @@ const Day = ({ day, monthIndex, allTasks }: Props) => {
   return (
     <div
       className={cn(
-        `border border-border flex flex-col  transition-opacity duration-200 bg-background py-1 px-1.5 ${
+        `border border-border flex flex-col transition-opacity duration-200 bg-background py-1 px-1.5 ${
           day.format("ddd") === "Sat" || day.format("ddd") === "Sun"
-            ? "bg-accent "
+            ? "bg-accent"
             : ""
         } ${isPreviousMonth ? "opacity-50 dark:opacity-25" : ""}`
       )}
@@ -56,6 +58,7 @@ const Day = ({ day, monthIndex, allTasks }: Props) => {
           {day.format("DD")}
         </p>
       </div>
+
       <CalendarTasks calendarItems={dayTask} />
     </div>
   );

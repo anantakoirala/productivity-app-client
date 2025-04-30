@@ -2,10 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WorkspaceMemberSettings from "@/components/workspace/WorkspaceMemberSettings";
 import WorkspaceSettingOverview from "@/components/workspace/WorkspaceSettingOverview";
-import {
-  useLazyGetWorkspaceQuery,
-  useLazyGetWorkspaceSettingQuery,
-} from "@/redux/Workspace/workspaceApi";
+import { useLazyGetWorkspaceSettingQuery } from "@/redux/Workspace/workspaceApi";
 import { Layers, Users2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";

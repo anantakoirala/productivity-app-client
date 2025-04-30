@@ -13,8 +13,8 @@ type initialState = {
     content?: JSON | null;
     creatorId: number;
     workspaceId: number;
-    from?: Date;
-    to?: Date;
+    date?: Date;
+
     taskTags: Tag[];
     projectId: number | undefined;
   };
@@ -29,8 +29,8 @@ const initialState: initialState = {
     creatorId: 0,
     workspaceId: 0,
     content: null,
-    from: undefined,
-    to: undefined,
+    date: undefined,
+
     taskTags: [],
     projectId: undefined,
   },
@@ -42,7 +42,6 @@ export const taskSlice = createSlice({
   initialState,
   reducers: {
     setTaskInfo: (state, action) => {
-      console.log("action", action.payload);
       state.task.id = action.payload.id;
       state.task.title = action.payload.title;
       state.task.workspaceId = action.payload.workspaceId;
@@ -50,12 +49,7 @@ export const taskSlice = createSlice({
       state.task.content = action.payload.content;
       state.task.emoji = action.payload.emoji;
       state.task.projectId = action.payload.projectId;
-      state.task.from = action.payload.from
-        ? new Date(action.payload.from)
-        : undefined;
-      state.task.to = action.payload.to
-        ? new Date(action.payload.to)
-        : undefined;
+      state.task.date = action.payload.date ? action.payload.date : undefined;
 
       if (action.payload.taskTags.length > 0) {
         const taskTags = action.payload.taskTags;

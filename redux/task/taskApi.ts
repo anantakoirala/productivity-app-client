@@ -1,7 +1,5 @@
-import { Tag } from "@/types/Tag";
 import { api } from "../api";
 
-import { setWorkspaceTags } from "../Workspace/workspaceSlice";
 import { setTaskInfo, setUserToTaskAssignee } from "./taskSlice";
 
 export const taskApi = api.injectEndpoints({
@@ -15,6 +13,7 @@ export const taskApi = api.injectEndpoints({
           credentials: "include" as const,
         };
       },
+      invalidatesTags: ["singleWorkspace"],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
@@ -37,7 +36,7 @@ export const taskApi = api.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          console.log("result", result);
+
           dispatch(setTaskInfo(result.data.task));
           //dispatch(setWorkspaceTags(result.data.tags));
         } catch (error: any) {
@@ -111,6 +110,30 @@ export const taskApi = api.injectEndpoints({
         }
       },
     }),
+    getTaskAssignedToMe: builder.query({
+      query: ({ workspaceId, page = 1, limit = 10 }) => {
+        return {
+          url: `/api/task/${workspaceId}?page=${page}&limit=${limit}`,
+          method: "GET",
+          credentials: "include" as const,
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+
+          // dispatch(
+          //   setProject({
+          //     projects: result.data.project,
+          //     pagination: result.data.pagination,
+          //   })
+          // );
+        } catch (error: any) {
+          console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
@@ -120,4 +143,5 @@ export const {
   useUpdateTaskMutation,
   useAsignUserMutation,
   useRemoveUserFromTaskMutation,
+  useLazyGetTaskAssignedToMeQuery,
 } = taskApi;

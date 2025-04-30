@@ -24,7 +24,7 @@ const ChatHeader = ({ socket }: Props) => {
   }, [socket, activeWorkspaceId]);
   return (
     <div className="w-full border-b border-border shadow-sm">
-      <div className="px-4 py-2 flex flex-col">
+      <div className="px-4 py-1 flex flex-row items-center justify-between">
         <h3 className="text-primary text-lg font-semibold">
           {activeWorkSpaceName} chat
         </h3>

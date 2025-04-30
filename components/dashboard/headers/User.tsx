@@ -12,7 +12,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Check,
   Link,
@@ -23,11 +23,29 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { AuthContext } from "@/contextProviders/AuthProvider";
+import { useRouter } from "next/navigation";
+import { restApi } from "@/api";
 
 type Props = {};
 
 const User = (props: Props) => {
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
+
+  const auth = useContext(AuthContext);
+  if (!auth) {
+    return <div>Loading..</div>;
+  }
+
+  const { name, email } = auth;
+
+  const logOut = async () => {
+    try {
+      const response = await restApi.get("/api/auth/logout");
+      router.push("/signin");
+    } catch (error) {}
+  };
 
   return (
     <DropdownMenu>
@@ -42,8 +60,8 @@ const User = (props: Props) => {
             <UserIcon />
           </div>
           <div className="">
-            <DropdownMenuLabel>Ananta</DropdownMenuLabel>
-            <DropdownMenuLabel>ananta@gmail.com</DropdownMenuLabel>
+            <DropdownMenuLabel>{name}</DropdownMenuLabel>
+            <DropdownMenuLabel>{email}</DropdownMenuLabel>
           </div>
         </div>
         <DropdownMenuSeparator />
@@ -81,10 +99,18 @@ const User = (props: Props) => {
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            router.push("/dashboard/settings");
+          }}
+        >
           <Settings size={16} /> Settings
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            logOut();
+          }}
+        >
           <LogOut size={16} /> Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

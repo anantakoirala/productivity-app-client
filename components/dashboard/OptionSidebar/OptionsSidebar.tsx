@@ -17,7 +17,7 @@ type Props = {};
 const OptionsSidebar = (props: Props) => {
   const { workspace_id } = useParams();
   const pathName = usePathname();
-  const { activeWorkspaceId } = useSelector(
+  const { activeWorkspaceId, userRoleForWorkspace } = useSelector(
     (state: RootState) => state.workspace
   );
 
@@ -36,16 +36,20 @@ const OptionsSidebar = (props: Props) => {
           <>
             <WorkSpaceOptions />
             {/* <WorkSpaceSettings /> */}
-            <div className="">
-              <p className="text-xs sm:text-sm uppercase text-muted-foreground">
-                Actions
-              </p>
-              <div className="flex flex-col gap-2 w-full mt-1">
-                <AddNewTask />
-                <AddNewMindMap />
-                <AddNewProject />
+            {(userRoleForWorkspace === "ADMIN" ||
+              userRoleForWorkspace === "OWNER") && (
+              <div className="">
+                <p className="text-xs sm:text-sm uppercase text-muted-foreground">
+                  Actions
+                </p>
+
+                <div className="flex flex-col gap-2 w-full mt-1">
+                  <AddNewTask />
+                  <AddNewMindMap />
+                  <AddNewProject />
+                </div>
               </div>
-            </div>
+            )}
             <div className="mt-1">
               <p className="text-xs sm:text-sm uppercase text-muted-foreground">
                 Projects

@@ -41,7 +41,7 @@ const AssignUser = (props: Props) => {
         >
           <Plus size={12} className="mr-1" />
           <span className="hidden sm:inline">Asign User</span>
-          <span className="sm:hidden">Tag</span>
+          <span className="sm:hidden">User</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

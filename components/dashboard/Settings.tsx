@@ -31,7 +31,7 @@ const settingsFields = [
 const Settings = (props: Props) => {
   const { setIsOpen } = useToggleSidebar();
   const router = useRouter();
-  const { myWorkspaceAsAdmin } = useSelector(
+  const { myWorkspaceAsAdmin, workspaces } = useSelector(
     (state: RootState) => state.workspace
   );
   return (
@@ -61,7 +61,7 @@ const Settings = (props: Props) => {
         </p>
         <div className="flex flex-col gap-2 w-full mt-2 h-96 hide-scrollbar overflow-y-auto">
           <div className="flex flex-col p-2 gap-1">
-            {myWorkspaceAsAdmin.map((myWorkspace) => (
+            {workspaces.map((myWorkspace) => (
               <div
                 className="w-full h-10 flex flex-row gap-2 items-center hover:bg-primary/20 rounded-sm transition-colors duration-200 cursor-pointer"
                 onClick={() =>

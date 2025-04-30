@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { setProject } from "./ProjectSlice";
+import { setProject, setTasks, setTotalPages } from "./ProjectSlice";
 
 export const projectApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,15 +35,53 @@ export const projectApi = api.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          console.log("result", result.data);
-          // dispatch(
-          //   setProject({
-          //     projects: result.data.project,
-          //     pagination: result.data.pagination,
-          //   })
-          // );
+          console.log("result", result.data.pagination);
+          dispatch(setTasks(result.data.project.tasks));
+          dispatch(setTotalPages(result.data.pagination.totalPages));
         } catch (error: any) {
           console.log("error while updating workspace tags");
+          console.log(error);
+        }
+      },
+    }),
+    deleteProject: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/api/project/delete-project`,
+          method: "POST",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      invalidatesTags: ["singleWorkspace"],
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result", result);
+          //dispatch(setWorkspaceTags(result.data.tags));
+        } catch (error: any) {
+          console.log("error while creating project", error);
+          console.log(error);
+        }
+      },
+    }),
+    updateProject: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          url: `/api/project/${id}`,
+          method: "PATCH",
+          body: data,
+          credentials: "include" as const,
+        };
+      },
+      invalidatesTags: ["singleWorkspace"],
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          console.log("result", result);
+          //dispatch(setWorkspaceTags(result.data.tags));
+        } catch (error: any) {
+          console.log("error while creating project", error);
           console.log(error);
         }
       },
@@ -51,5 +89,9 @@ export const projectApi = api.injectEndpoints({
   }),
 });
 
-export const { useCreateProjectMutation, useLazyGetIndividualProjectQuery } =
-  projectApi;
+export const {
+  useCreateProjectMutation,
+  useLazyGetIndividualProjectQuery,
+  useDeleteProjectMutation,
+  useUpdateProjectMutation,
+} = projectApi;

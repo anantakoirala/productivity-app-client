@@ -49,7 +49,7 @@ const Page = (props: Props) => {
         ...data,
         token: token ? token : "",
       });
-
+      console.log("response", response);
       toast.success(response?.data?.message);
       router.push("/signin");
       setIsLoading(false);

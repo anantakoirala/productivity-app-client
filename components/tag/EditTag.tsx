@@ -26,7 +26,7 @@ const EditTag = ({ setTab, onUpdateActiveTags, onDeleteActiveTags }: Props) => {
   );
 
   const { editTagInfo } = useSelector((state: RootState) => state.tag);
-  const { activeWorkspaceId } = useSelector(
+  const { activeWorkspaceId, userRoleForWorkspace } = useSelector(
     (state: RootState) => state.workspace
   );
 
@@ -154,19 +154,21 @@ const EditTag = ({ setTab, onUpdateActiveTags, onDeleteActiveTags }: Props) => {
       </RadioGroup>
 
       <div className="flex gap-2">
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteTag(editTagInfo.id);
-          }}
-          type="button"
-          className="w-1/2 h-fit py-1.5 bg-red-700 hover:bg-red-600"
-          size={"sm"}
-          variant={"secondary"}
-          disabled={deleteTagLoading}
-        >
-          Delete
-        </Button>
+        {userRoleForWorkspace === "ADMIN" && (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteTag(editTagInfo.id);
+            }}
+            type="button"
+            className="w-1/2 h-fit py-1.5 bg-red-700 hover:bg-red-600"
+            size={"sm"}
+            variant={"secondary"}
+            disabled={deleteTagLoading}
+          >
+            Delete
+          </Button>
+        )}
         <Button
           disabled={isLoading}
           form="edit-tag-form"

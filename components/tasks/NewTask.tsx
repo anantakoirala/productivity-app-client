@@ -100,12 +100,11 @@ const NewTask = (props: Props) => {
     defaultValues: {
       icon: "🧠",
       title: "",
-      date: null,
+
       content: null,
       projectId: task.projectId,
     },
   });
-
   const {
     register,
     handleSubmit,
@@ -123,12 +122,8 @@ const NewTask = (props: Props) => {
         ...data,
         activeTagIds,
         workspaceId: Number(workspace_id),
-        date: {
-          from: data.date?.from ? new Date(data.date.from) : undefined,
-          to: data.date?.to ? new Date(data.date.to) : undefined,
-        },
       };
-
+      console.log("data", data);
       await updateTask({ taskId: taskId, data: finalData }).unwrap();
       toast.success("Task updated successfully");
     } catch (error) {
@@ -140,16 +135,13 @@ const NewTask = (props: Props) => {
     setValue("icon", emoji);
   };
 
-  const setDateValue = (date: DateRange | undefined) => {
-    if (!date || !date.from) {
-      setValue("date", undefined); // or null if you use nullable
+  const setDateValue = (date: Date | undefined) => {
+    if (!date) {
+      setValue("date", undefined); // Update to use 'from' directly
       return;
     }
 
-    setValue("date", {
-      from: date.from,
-      to: date.to,
-    });
+    setValue("date", date); // Set only 'from' (no 'to' anymore)
   };
 
   const setEditorContent = (content: any) => {
@@ -196,10 +188,6 @@ const NewTask = (props: Props) => {
     }
   }, [task.taskTags]);
 
-  useEffect(() => {
-    console.log("errors", errors);
-  }, [errors]);
-
   if (pageNotFound) {
     notFound();
   }
@@ -225,13 +213,17 @@ const NewTask = (props: Props) => {
                   />
                   <div className="w-full gap-1 flex flex-wrap  flex-row">
                     <TaskCalendar setDateValue={setDateValue} />
-                    <AssignUser />
-                    <TagSelector
-                      onSelectActiveTags={onSelectActiveTags}
-                      currentActiveTags={currentActiveTags}
-                      onUpdateActiveTags={onUpdateActiveTags}
-                      onDeleteActiveTags={onDeleteActiveTags}
-                    />
+                    {userRoleForWorkspace !== "READ_ONLY" && <AssignUser />}
+
+                    {/* Tag selector */}
+                    {userRoleForWorkspace !== "READ_ONLY" && (
+                      <TagSelector
+                        onSelectActiveTags={onSelectActiveTags}
+                        currentActiveTags={currentActiveTags}
+                        onUpdateActiveTags={onUpdateActiveTags}
+                        onDeleteActiveTags={onDeleteActiveTags}
+                      />
+                    )}
                     {currentActiveTags.map((activeTag) => (
                       <LinkTag key={activeTag.id} tag={activeTag} />
                     ))}
@@ -239,17 +231,12 @@ const NewTask = (props: Props) => {
                 </div>
               </div>
               <Editor setEditorContent={setEditorContent} />
-              {errors?.date?.from && (
+              {errors?.date && (
                 <span className="text-red-600 text-sm">
-                  {errors.date.from.message}
+                  {errors.date.message}
                 </span>
               )}
 
-              {errors?.date?.to && (
-                <span className="text-red-600 text-sm">
-                  {errors.date.to.message}
-                </span>
-              )}
               {userRoleForWorkspace !== "READ_ONLY" && (
                 <div className="flex flex-col md:flex-row gap-2 items-center justify-between w-full">
                   <div className="">
@@ -281,14 +268,17 @@ const NewTask = (props: Props) => {
                       )}
                     />
                   </div>
+
                   <div className="flex flex-row gap-2">
-                    <Button
-                      type="submit"
-                      disabled={updateTaskLoading}
-                      className="bg-red-700 hover:bg-red-600"
-                    >
-                      Delete
-                    </Button>
+                    {userRoleForWorkspace !== "CAN_EDIT" && (
+                      <Button
+                        type="submit"
+                        disabled={updateTaskLoading}
+                        className="bg-red-700 hover:bg-red-600"
+                      >
+                        Delete
+                      </Button>
+                    )}
 
                     <Button type="submit" disabled={updateTaskLoading}>
                       Update

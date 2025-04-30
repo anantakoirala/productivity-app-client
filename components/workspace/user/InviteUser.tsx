@@ -43,8 +43,6 @@ const InviteUser = (props: Props) => {
   const [tags, setTags] = useState<string[]>([]);
 
   const sendInvitation = async () => {
-    console.log("tags", tags);
-    console.log("selectedRole", selectedRole);
     await createInvitation({
       tags: tags,
       role: selectedRole,

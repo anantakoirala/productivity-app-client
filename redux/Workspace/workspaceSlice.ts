@@ -23,6 +23,7 @@ type WorkspaceTags = {
 type Project = {
   id: number;
   title: string;
+  workSpaceId: number;
 };
 
 type initialState = {
@@ -32,11 +33,16 @@ type initialState = {
   myWorkspaceAsAdmin: WorkSpaceType[];
   projects: Project[];
   activeWorkspaceImage: string | null;
-  settingWorkspace: { id: string; name: string; image: string | null };
+  settingWorkspace: {
+    id: string;
+    name: string;
+    image: string | null;
+    role: "ADMIN" | "CAN_EDIT" | "READ_ONLY" | "OWNER";
+  };
   workspaceSubscribers: WorkspaceSubscribers[];
   workspaceTags: WorkspaceTags[];
   workspaceTasks: { id: number; title: string; emoji: string | null }[];
-  userRoleForWorkspace: "ADMIN" | "CAN_EDIT" | "READ_ONLY";
+  userRoleForWorkspace: "ADMIN" | "CAN_EDIT" | "READ_ONLY" | "OWNER";
   workspaceMindMaps: { id: number; title: string }[];
   conversationId: number | null;
 };
@@ -48,7 +54,7 @@ const initialState: initialState = {
   activeWorkSpaceName: "",
   myWorkspaceAsAdmin: [],
   activeWorkspaceImage: null,
-  settingWorkspace: { id: "", name: "", image: null },
+  settingWorkspace: { id: "", name: "", image: null, role: "READ_ONLY" },
   workspaceSubscribers: [],
   workspaceTags: [],
   workspaceTasks: [],

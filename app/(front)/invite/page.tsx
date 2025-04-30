@@ -1,15 +1,14 @@
 "use client";
-import { restApi } from "@/api";
 import { handleApiError } from "@/lib/handleApiError";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
+import Head from "next/head";
 
 type Props = {};
 
 const Page = (props: Props) => {
   const route = useRouter();
-
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -18,54 +17,85 @@ const Page = (props: Props) => {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API}/api/auth/me`,
-          { withCredentials: true }
+          {
+            withCredentials: true,
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+            params: {
+              _: new Date().getTime(), // cache buster
+            },
+          }
         );
 
-        // If user is logged in
-        if (response.status === 200) {
-          const inviteResponse = await axios.post(
-            `${process.env.NEXT_PUBLIC_API}/api/public/validate-invite-token`,
-            { token, email: response.data.user.email }
-          );
-
-          // If there is an invitation
-          if (inviteResponse.status === 201) {
-            if (!inviteResponse.data.inviteData) {
-              throw new Error("Invalid or expired invitation");
-            } else {
-              // Create subscription
-              try {
-                const createSubscriptionResponse = await axios.post(
-                  `${process.env.NEXT_PUBLIC_API}/api/public/create-subscription-from-invitation`,
-                  { token, email: response.data.user.email }
-                );
-
-                route.push("/dashboard");
-              } catch (createError) {
-                throw new Error("Error while creating subscription");
-              }
-            }
-          }
+        if (response.status !== 200 || !response.data?.user?.email) {
+          throw new Error("User not authenticated");
         }
+
+        const inviteResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_API}/api/public/validate-invite-token`,
+          {
+            token,
+            email: response.data.user.email,
+          },
+          {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          }
+        );
+
+        if (inviteResponse.status !== 201 || !inviteResponse.data.inviteData) {
+          throw new Error("Invalid or expired invitation");
+        }
+
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API}/api/public/create-subscription-from-invitation`,
+          {
+            token,
+            email: response.data.user.email,
+          },
+          {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          }
+        );
+
+        route.push("/dashboard");
       } catch (error: any) {
-        // Handle specific errors
         if (error.response?.status === 401) {
           route.push(`/signin?token=${token}`);
         } else if (
           error.message === "Invalid or expired invitation" ||
-          error.message === "Error while creating subscription"
+          error.message === "Error while creating subscription" ||
+          error.message === "User not authenticated"
         ) {
           handleApiError(error);
         } else {
-          console.log("Error", error);
+          console.log("Unexpected error", error);
         }
       }
     };
 
-    checkAuthenticatedUser();
+    if (token) {
+      checkAuthenticatedUser();
+    }
   }, [token]);
 
-  return <div>Vefify</div>;
+  return (
+    <>
+      <Head>
+        <meta httpEquiv="Cache-Control" content="no-store" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+      </Head>
+      <div>Verify</div>
+    </>
+  );
 };
 
 export default Page;

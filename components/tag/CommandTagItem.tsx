@@ -102,7 +102,7 @@ const CommandTagItem = ({
         </p>
         {isActive && <Check size={16} />}
       </Button>
-      {isHovered && (
+      {/* {isHovered && (
         <Button
           className="absolute top-1/2 right-6 translate-y-[-50%] h-fit rounded-none z-20 bg-transparent hover:bg-transparent text-muted-foreground"
           onClick={(e) => {
@@ -112,7 +112,7 @@ const CommandTagItem = ({
         >
           <Pencil size={16} />
         </Button>
-      )}
+      )} */}
     </CommandItem>
   );
 };

@@ -52,7 +52,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import toast from "react-hot-toast";
 import { NodeColors } from "@/types/NodeColors";
-import MindMapTagSelector from "./MindMapTagSelector";
 import { Separator } from "../ui/separator";
 import TagSelector from "../tag/TagSelector";
 import { Tag } from "@/types/Tag";
@@ -361,25 +360,28 @@ const MindMap = (props: Props) => {
                 </Tooltip>
               </TooltipProvider>
               {/* Save */}
-              <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={onSave}
-                      variant={"ghost"}
-                      size={"icon"}
-                      disabled={isLoading}
-                    >
-                      <Save size={22} />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Save</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              {userRoleForWorkspace !== "READ_ONLY" && (
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={onSave}
+                        variant={"ghost"}
+                        size={"icon"}
+                        disabled={isLoading}
+                      >
+                        <Save size={22} />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Save</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               {/* Delete all nodes */}
-              <DeleteAllNodes />
+
+              {/* <DeleteAllNodes /> */}
               {/* Edit Info */}
               <TooltipProvider delayDuration={100}>
                 <Tooltip>

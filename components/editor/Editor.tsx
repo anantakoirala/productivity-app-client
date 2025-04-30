@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
-import { Card, CardContent } from "../ui/card";
+
 import { useEditor, BubbleMenu, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
-import History from "@tiptap/extension-history";
+
 import Link from "@tiptap/extension-link";
 import OptionBtn from "./tools/OptionBtn";
 import Image from "@tiptap/extension-image";
@@ -28,7 +28,7 @@ import {
 import { Separator } from "../ui/separator";
 import AddLink from "./tools/AddLink";
 import FloatingContainer from "./tools/FloatingContainer";
-import { Button } from "../ui/button";
+
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
@@ -72,6 +72,9 @@ const Editor = ({ setEditorContent }: Props) => {
     content: task.content ? task.content : ``,
     editable: userRoleForWorkspace === "READ_ONLY" ? false : true,
     immediatelyRender: false,
+    onCreate: ({ editor }) => {
+      editor.commands.focus();
+    },
     onUpdate: ({ editor }) => {
       setEditorContent(editor.getJSON());
       //console.log(editor.getJSON()); // logs HTML content on change

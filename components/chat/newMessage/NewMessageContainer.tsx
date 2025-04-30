@@ -25,9 +25,16 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 type Props = {
   setFetchedMessages: Dispatch<SetStateAction<Message[]>>;
   socket?: Socket;
+  initalScrollToDown: boolean;
+  setInitialScrollToDown: Dispatch<SetStateAction<boolean>>;
 };
 
-const NewMessageContainer = ({ setFetchedMessages, socket }: Props) => {
+const NewMessageContainer = ({
+  setFetchedMessages,
+  socket,
+  initalScrollToDown,
+  setInitialScrollToDown,
+}: Props) => {
   const [message, setMessage] = useState("");
 
   const [files, setFiles] = useState<File[]>([]);
@@ -103,6 +110,7 @@ const NewMessageContainer = ({ setFetchedMessages, socket }: Props) => {
     }
 
     setMessage("");
+    setInitialScrollToDown(true);
     setFiles([]);
   };
 

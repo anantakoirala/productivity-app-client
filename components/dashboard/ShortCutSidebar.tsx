@@ -10,11 +10,13 @@ const ShortCutSidebar = (props: Props) => {
   return (
     <div className="border-r min-h-screen flex flex-col justify-between items-center p-4 sm:py-6">
       <div className="w-full h-full  space-y-4 flex flex-col items-center justify-between ">
-        <TopIcons />
+        <div className="flex flex-col gap-2">
+          <TopIcons />
 
-        <div className="space-y-4 flex flex-col items-center">
-          <Workspaces />
-          <AddWorkspaceDialog />
+          <div className="flex flex-col items-center">
+            <Workspaces />
+            <AddWorkspaceDialog />
+          </div>
         </div>
         <BottomSidebar />
       </div>

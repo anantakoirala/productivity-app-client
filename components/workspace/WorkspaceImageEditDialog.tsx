@@ -136,7 +136,13 @@ const WorkspaceImageEditDialog = (props: Props) => {
           <DialogTrigger asChild>
             <div
               className="relative  w-16 h-16 md:h-20 md:w-20 rounded-full flex justify-center items-center text-muted-foreground overflow-hidden group"
-              onClick={() => setIsDialogOpen(true)}
+              onClick={(e) => {
+                if (settingWorkspace.role !== "OWNER") {
+                  e.preventDefault();
+                  return;
+                }
+                setIsDialogOpen(true);
+              }}
             >
               {settingWorkspace.image ? (
                 <span className="relative flex shrink-0 overflow-hidden rounded-full size-32 cursor-pointer ring-offset-2 ring-2 ring-slate-200">

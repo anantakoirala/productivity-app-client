@@ -5,30 +5,28 @@ export const taskSchema = z
     icon: z.string().optional(),
     title: z.string().optional(),
     projectId: z.coerce.number().min(1, "Project is required"),
-    date: z
-      .object({
-        from: z.date().optional(), // don't make it required here
-        to: z.date().optional(),
-      })
-      .nullable()
-      .optional(),
+    date: z.date().optional(),
     content: z.any(),
   })
-  // Require from date explicitly
-  .refine((data) => data.date?.from, {
-    message: "Start date is required",
-    path: ["date.from"],
-  })
-  // Only check to > from if from exists
+  // Ensure date is not before today
   .refine(
-    (data) =>
-      !data.date?.from || // if no from, skip
-      !data.date?.to || // if no to, skip
-      data.date.to.getTime() > data.date.from.getTime(), // otherwise validate
+    (data) => {
+      if (data.date) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set today's time to midnight
+        return data.date >= today;
+      }
+      return true; // If no date is provided, validation passes
+    },
     {
-      message: "End date must be after start date",
-      path: ["date.to"],
+      message: "Start date cannot be before today",
+      path: ["date"],
     }
-  );
+  )
+  // Require date explicitly
+  .refine((data) => data.date, {
+    message: "Start date is required",
+    path: ["date"],
+  });
 
 export type TaskSchemaType = z.infer<typeof taskSchema>;

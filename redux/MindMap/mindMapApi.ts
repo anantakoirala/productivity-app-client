@@ -12,6 +12,7 @@ export const mindMapApi = api.injectEndpoints({
           credentials: "include" as const,
         };
       },
+      invalidatesTags: ["singleWorkspace"],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;

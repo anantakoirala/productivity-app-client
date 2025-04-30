@@ -133,12 +133,13 @@ export const workspaceApi = api.injectEndpoints({
         try {
           const result = await queryFulfilled;
           // console.log("result workspace", result.data.workspace);
-
+          console.log("result", result);
           dispatch(
             setSettingWorkspace({
               id: result.data.workspace.id,
               name: result.data.workspace.name,
               image: result.data.workspace.image,
+              role: result.data.role,
             })
           );
         } catch (error: any) {

@@ -17,76 +17,84 @@ import { handleApiError } from "@/lib/handleApiError";
 
 type Props = {
   fetchedMessages: Message[];
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  totalPages: number;
+  setMessages: Dispatch<SetStateAction<Message[]>>;
+  initalScrollToDown: boolean;
+  setInitialScrollToDown: Dispatch<SetStateAction<boolean>>;
 };
 
-const MessageContainer = ({ fetchedMessages }: Props) => {
+const MessageContainer = ({
+  fetchedMessages,
+  page,
+  setPage,
+  totalPages,
+  setMessages,
+  initalScrollToDown,
+  setInitialScrollToDown,
+}: Props) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef() as React.MutableRefObject<HTMLDivElement>;
-  const [userScrolled, setUserScrolled] = useState(false);
-
-  const [page, setPage] = useState(1);
-  const pageRef = useRef(1);
-  const [notification, setNotification] = useState<number>(0);
 
   const prevScrollHeight = useRef<number>(0);
 
   const { activeWorkspaceId, conversationId } = useSelector(
     (state: RootState) => state.workspace
   );
-  const [trigger, { isLoading }] = useLazyGetConversationQuery();
+  const [trigger, { isLoading, isFetching }] = useLazyGetConversationQuery();
 
-  const handleScroll = useCallback(async () => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
+  const handleScroll = async (e: any) => {
+    setInitialScrollToDown(false);
+    const container = e.target;
 
-    const isNearBottom =
-      scrollContainer.scrollTop >=
-      scrollContainer.scrollHeight - scrollContainer.clientHeight - 10;
-
-    setUserScrolled(true);
-    if (isNearBottom) {
-      setNotification(0);
-    }
-
-    // ⬆️ If at top, fetch older messages
-    if (scrollContainer.scrollTop === 0) {
-      prevScrollHeight.current = scrollContainer.scrollHeight;
-
+    if (container.scrollTop === 0 && !isFetching && page < totalPages) {
       try {
+        const nextPage = page + 1;
+
+        const oldScrollHeight = container.scrollHeight;
+
         const response = await trigger({
           workspaceId: activeWorkspaceId,
           chatId: conversationId,
-          page,
+          page: nextPage,
         }).unwrap();
-        console.log("scrooll response", response);
-        pageRef.current += 1; // increment manually
-        setPage(pageRef.current); // update state if needed
-      } catch (error: any) {
+
+        const newMsgs = response.conversation.Messages;
+
+        if (Array.isArray(newMsgs) && newMsgs.length > 0) {
+          // Create a new array and reverse the messages
+          const reversedMessages = [...newMsgs].reverse();
+
+          // Prepend the reversed new messages to the existing ones
+          setMessages((prev) => [...reversedMessages, ...prev]);
+
+          // Update page
+          setPage(nextPage);
+
+          // Maintain scroll position after DOM updates
+          requestAnimationFrame(() => {
+            const newScrollHeight = container.scrollHeight;
+            container.scrollTop = newScrollHeight - oldScrollHeight;
+          });
+        }
+      } catch (error) {
         handleApiError(error);
       }
-
-      // await fetchOlderMessages();
-
-      // 🧷 Maintain scroll position after older messages are prepended
-      requestAnimationFrame(() => {
-        const newScrollHeight = scrollContainer.scrollHeight;
-        scrollContainer.scrollTop = newScrollHeight - prevScrollHeight.current;
-      });
     }
-  }, []);
+  };
 
   useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (scrollContainer && !userScrolled) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-  }, [userScrolled]);
-
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    console.log("fetched", fetchedMessages);
   }, [fetchedMessages]);
+
+  // useEffect(() => {
+  //   if (initalScrollToDown) {
+  //     if (bottomRef.current) {
+  //       bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  //     }
+  //   }
+  // }, [fetchedMessages, initalScrollToDown]);
 
   return (
     <div
@@ -94,12 +102,16 @@ const MessageContainer = ({ fetchedMessages }: Props) => {
       ref={scrollRef}
       onScroll={handleScroll}
     >
-      <div className="flex flex-col gap-2 px-3 py-2">
-        {fetchedMessages.map((msg, index) => (
-          <MessageBlock key={index} message={msg} />
-        ))}
-        <div ref={bottomRef} />
-      </div>
+      {fetchedMessages.length > 0 ? (
+        <div className="flex flex-col gap-2 px-3 py-2">
+          {fetchedMessages.map((msg, index) => (
+            <MessageBlock key={index} message={msg} />
+          ))}
+          <div ref={bottomRef} />
+        </div>
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 };

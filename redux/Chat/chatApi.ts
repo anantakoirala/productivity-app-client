@@ -15,8 +15,7 @@ export const chatApi = api.injectEndpoints({
         try {
           const result = await queryFulfilled;
 
-          console.log("conversation", result.data.conversation.Messages);
-          dispatch(setMessages(result.data.conversation.Messages));
+          //dispatch(setMessages(result.data.conversation.Messages));
         } catch (error: any) {
           console.log("error while updating workspace minmap");
           console.log(error);

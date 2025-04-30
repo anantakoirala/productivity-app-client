@@ -6,6 +6,8 @@ import Welcome from "./Welcome";
 import OpenSidebar from "@/components/OpenSidebar";
 import InviteUser from "@/components/workspace/user/InviteUser";
 import { useParams, usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type Props = {};
 
@@ -13,6 +15,9 @@ const DashboardHeader = (props: Props) => {
   const pathname = usePathname();
   const { workspace_id } = useParams();
   const [showInviteUser, setShowInviteUser] = useState<boolean>(false);
+  const { userRoleForWorkspace } = useSelector(
+    (state: RootState) => state.workspace
+  );
 
   useEffect(() => {
     setShowInviteUser(false);
@@ -33,8 +38,12 @@ const DashboardHeader = (props: Props) => {
         {/* <BreadCrumbNav /> */}
       </div>
       <div className="flex flex-row gap-2 items-center justify-center">
-        {showInviteUser && <InviteUser />}
-        <User />
+        <>
+          {(userRoleForWorkspace === "OWNER" ||
+            userRoleForWorkspace === "ADMIN") &&
+            showInviteUser && <InviteUser />}
+          <User />
+        </>
       </div>
     </header>
   );
